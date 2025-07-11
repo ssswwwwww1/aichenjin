@@ -163,7 +163,7 @@ const CulturalLearning = () => {
           <TabPane tab="智能体定制" key="1">
             <Row gutter={[24, 24]}>
               <Col xs={24} md={8}>
-                <Card title="智能体外观" className="avatar-card">
+                <Card title="智能体外观" className="avatar-card glass-effect">
                   <div className="avatar-preview">
                     <Avatar src={aiAvatar} size={180} />
                   </div>
@@ -206,7 +206,7 @@ const CulturalLearning = () => {
               </Col>
 
               <Col xs={24} md={8}>
-                <Card title="智能体音色" className="voice-card">
+                <Card title="智能体音色" className="voice-card glass-effect">
                   <Form layout="vertical">
                     <Form.Item label="选择音色">
                       <Select 
@@ -245,7 +245,7 @@ const CulturalLearning = () => {
               </Col>
 
               <Col xs={24} md={8}>
-                <Card title="智能体特性" className="feature-card">
+                <Card title="智能体特性" className="feature-card glass-effect">
                   <Form layout="vertical">
                     <Form.Item label="知识深度">
                       <Slider defaultValue={70} marks={{ 0: '基础', 50: '进阶', 100: '专家' }} />
@@ -289,7 +289,7 @@ const CulturalLearning = () => {
           <TabPane tab="文化问答" key="2">
             <Row gutter={[24, 0]}>
               <Col xs={24} md={16}>
-                <Card className="chat-card">
+                <Card className="chat-card glass-effect">
                   <div className="chat-container">
                     {chatHistory.map((msg, index) => (
                       <div 
@@ -355,7 +355,7 @@ const CulturalLearning = () => {
               </Col>
 
               <Col xs={24} md={8}>
-                <Card title="热门文化主题" className="topics-card">
+                <Card title="热门文化主题" className="topics-card glass-effect">
               <List
                     dataSource={culturalTopics}
                 renderItem={item => (
@@ -368,7 +368,7 @@ const CulturalLearning = () => {
                 )}
               />
               </Card>
-                <Card title="历史问答记录" className="history-card">
+                <Card title="历史问答记录" className="history-card glass-effect">
                   <List
                     dataSource={historicalQuestions}
                     renderItem={item => (
