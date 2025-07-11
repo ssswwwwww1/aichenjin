@@ -275,7 +275,7 @@ const RoutePlanning = () => {
         <Row gutter={[24, 24]}>
           <Col xs={24} md={16}>
             <Card 
-              className="main-card" 
+              className="main-card glass-effect" 
               title={
                 <div className="card-title">
                   {activeTab === 'form' ? (
@@ -462,7 +462,7 @@ const RoutePlanning = () => {
           <Col xs={24} md={8}>
             <Card 
               title="我的保存路线" 
-              className="sidebar-card"
+              className="sidebar-card glass-effect"
               extra={<a href="#!">查看全部</a>}
             >
               {savedRoutes.length > 0 ? (
@@ -493,7 +493,7 @@ const RoutePlanning = () => {
             
             <Card 
               title="热门景点推荐" 
-              className="sidebar-card"
+              className="sidebar-card glass-effect"
               style={{ marginTop: 24 }}
             >
               <List

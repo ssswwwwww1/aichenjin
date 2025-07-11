@@ -1,91 +1,83 @@
 .route-planning-page {
-  padding-top: 64px;
-}
-
-.page-header {
-  background-color: #1A2A3A;
-  color: #fff;
-  padding: 60px 0;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.page-header h1 {
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.main-content {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4ecfb 100%);
+  min-height: 100vh;
   padding-bottom: 40px;
 }
 
-.main-card {
-  height: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.page-header {
+  background: rgba(24, 144, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  color: white;
+  padding: 40px 0 30px;
+  margin-bottom: 30px;
 }
 
-.card-title {
-  font-size: 18px;
-  font-weight: bold;
+/* 玻璃模糊效果 */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.07) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.template-card,
-.saved-routes-card {
+.preferences-card, .attractions-card, .route-card {
+  border-radius: 16px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.template-item {
-  cursor: pointer;
-  transition: all 0.3s;
-  padding: 12px;
-  border-radius: 6px;
-}
-
-.template-item:hover {
-  background-color: #f5f5f5;
-}
-
-.template-icon {
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-}
-
-.saved-route-item {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 12px 0;
-}
-
-.saved-route-item:last-child {
-  border-bottom: none;
-}
-
-.saved-route-header {
+.route-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.saved-route-time {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 8px;
+.route-day {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.saved-route-desc {
-  margin-bottom: 8px;
+.route-item {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
 }
 
-.saved-route-actions {
-  display: flex;
-  justify-content: flex-end;
+.route-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.attraction-time {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.attraction-description {
+  margin-top: 8px;
+  color: rgba(0, 0, 0, 0.65);
 }
 
 .loading-container {
@@ -96,82 +88,85 @@
   padding: 60px 0;
 }
 
-.loading-text {
-  margin-top: 20px;
+.empty-route {
   text-align: center;
+  padding: 60px 0;
+  color: rgba(0, 0, 0, 0.45);
 }
 
-.result-header {
-  margin-bottom: 24px;
+/* 美化表单控件 */
+.ant-select-selector, .ant-input, .ant-slider {
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
 }
 
-.day-title {
-  margin: 24px 0 16px;
-  position: relative;
-  padding-left: 16px;
+.ant-select-selector:hover, .ant-input:hover {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1) !important;
 }
 
-.day-title::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 80%;
-  background-color: #1890ff;
-  border-radius: 2px;
+.ant-slider-track {
+  background-color: #1890ff !important;
 }
 
-.timeline-content {
-  padding: 8px 0;
+.ant-slider-handle {
+  border-color: #1890ff !important;
 }
 
-.place-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+/* 美化按钮 */
+.ant-btn {
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
 }
 
-.place-name {
-  font-size: 16px;
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.35) !important;
 }
 
-.place-description {
-  margin-bottom: 8px;
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%) !important;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.5) !important;
+  transform: translateY(-1px) !important;
 }
 
-.ar-features {
-  margin-top: 8px;
-}
-
-.ar-features .ant-tag {
+/* 美化标签 */
+.ant-tag {
+  border-radius: 4px;
+  padding: 4px 8px;
   margin: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.route-tips {
-  margin: 24px 0;
-  padding: 16px;
-  background-color: #f6ffed;
-  border: 1px solid #b7eb8f;
-  border-radius: 8px;
+.ant-tag:hover {
+  transform: scale(1.05);
 }
 
-.result-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
+/* 添加动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+.route-day {
+  animation: fadeIn 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.route-day:nth-child(1) { animation-delay: 0.1s; }
+.route-day:nth-child(2) { animation-delay: 0.2s; }
+.route-day:nth-child(3) { animation-delay: 0.3s; }
+
+/* 响应式调整 */
 @media (max-width: 768px) {
-  .page-header {
-    padding: 40px 0;
+  .preferences-card, .attractions-card, .route-card {
+    margin-bottom: 16px;
   }
   
-  .template-card,
-  .saved-routes-card {
-    margin-top: 24px;
+  .page-header {
+    padding: 30px 0 20px;
+    margin-bottom: 20px;
   }
 } 
