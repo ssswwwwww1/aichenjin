@@ -44,6 +44,8 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "@stagewise-plugins/react": "^0.5.1",
+    "@stagewise/toolbar-react": "^0.5.1",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.0"
   },

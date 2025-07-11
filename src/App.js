@@ -10,8 +10,11 @@ import ARExperience from './pages/ARExperience';
 import CulturalLearning from './pages/CulturalLearning';
 import Community from './pages/Community';
 import PersonalCenter from './pages/PersonalCenter';
+import RoutePlanning from './pages/RoutePlanning';
 import NotFound from './pages/NotFound';
 import './App.css';
+import { StagewiseToolbar } from '@stagewise/toolbar-react';
+import ReactPlugin from '@stagewise-plugins/react';
 
 const { Content } = Layout;
 
@@ -49,6 +52,7 @@ const AnimatedRoutes = () => {
         <Route path="/ar-experience" element={<ARExperience />} />
         <Route path="/cultural-learning" element={<CulturalLearning />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/route-planning" element={<RoutePlanning />} />
         <Route path="/personal-center" element={<PersonalCenter />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -112,6 +116,7 @@ function App() {
           <AnimatedRoutes />
         </Content>
         <Footer />
+        <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
       </Layout>
     </ConfigProvider>
   );

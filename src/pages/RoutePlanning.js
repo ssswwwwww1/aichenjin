@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Typography, Row, Col, Card, Form, Select, Button, Input, 
-  Checkbox, Steps, message, Spin, Tag, List, Timeline, Divider 
+  Checkbox, Steps, message, Spin, Tag, List, Divider 
 } from 'antd';
 import { 
   RobotOutlined, 
   EnvironmentOutlined, 
   ClockCircleOutlined, 
-  TeamOutlined, 
-  HeartOutlined,
+  StarOutlined,
   BulbOutlined,
   SendOutlined,
-  PictureOutlined,
-  StarOutlined
+  PictureOutlined
 } from '@ant-design/icons';
 import './RoutePlanning.css';
 
@@ -26,6 +24,7 @@ const RoutePlanning = () => {
   const [aiRouteResult, setAiRouteResult] = useState(null);
   const [routeForm] = Form.useForm();
   const [activeTab, setActiveTab] = useState('form');
+  const [savedRoutes, setSavedRoutes] = useState([]);
 
   // 兴趣选项
   const interestOptions = [
@@ -38,62 +37,17 @@ const RoutePlanning = () => {
     { label: '摄影打卡', value: 'photography' },
     { label: '文化体验', value: 'cultural' }
   ];
-  
-  // 路线模板
-  const routeTemplates = [
-    {
-      id: 'family',
-      name: '亲子家庭路线',
-      description: '适合带孩子的家庭，包含互动性强、知识丰富的景点',
-      icon: <TeamOutlined style={{ color: '#ff7875' }} />
-    },
-    {
-      id: 'cultural',
-      name: '文化深度路线',
-      description: '适合文化爱好者，深入了解历史文化底蕴',
-      icon: <StarOutlined style={{ color: '#52c41a' }} />
-    },
-    {
-      id: 'photography',
-      name: '摄影打卡路线',
-      description: '适合摄影爱好者，包含最佳拍照点和美景推荐',
-      icon: <HeartOutlined style={{ color: '#faad14' }} />
-    },
-    {
-      id: 'time_saving',
-      name: '时间紧凑路线',
-      description: '适合时间有限的游客，合理安排高效游览路线',
-      icon: <ClockCircleOutlined style={{ color: '#1890ff' }} />
-    }
-  ];
-  
-  // 保存的路线
-  const savedRoutes = [
-    {
-      id: 1,
-      title: '北京3日文化之旅',
-      days: 3,
-      created: '2025-03-15',
-      description: '故宫、天坛、颐和园等文化景点深度游'
-    },
-    {
-      id: 2,
-      title: '古都一日精华游',
-      days: 1,
-      created: '2025-03-10',
-      description: '紧凑行程，打卡北京必游景点'
-    }
-  ];
 
   // 当组件加载时，从localStorage获取保存的路线
   useEffect(() => {
     const savedUserRoutes = localStorage.getItem('userSavedRoutes');
     if (savedUserRoutes) {
       try {
-        // 暂时不覆盖示例数据，仅用于演示功能正常工作
-        console.log('从localStorage加载的路线:', JSON.parse(savedUserRoutes));
+        const parsedRoutes = JSON.parse(savedUserRoutes);
+        setSavedRoutes(parsedRoutes);
       } catch (e) {
         console.error('解析保存的路线数据失败', e);
+        setSavedRoutes([]);
       }
     }
   }, []);
@@ -104,64 +58,151 @@ const RoutePlanning = () => {
       setActiveTab('result');
       console.log('路线定制需求:', values);
       
-      // 模拟AI处理时间
+      // 实际项目中应该替换为真实API调用
       setTimeout(() => {
-        const mockResult = {
-          title: `${values.days}天${values.interests.includes('history') ? '历史文化' : '休闲'}路线`,
-          description: `为${values.travelers}位游客量身定制，特别关注${values.interests.join('、')}兴趣方向`,
-          steps: [
-            {
-              day: 1,
-              places: [
-                { 
-                  name: '故宫博物院', 
-                  duration: '3小时',
-                  description: '参观紫禁城，了解明清历史',
-                  arFeatures: ['皇宫3D复原', '虚拟角色互动']
-                },
-                { 
-                  name: '景山公园', 
-                  duration: '1小时',
-                  description: '俯瞰紫禁城全景',
-                  arFeatures: ['全景导览', '历史变迁展示']
-                },
-                { 
-                  name: '什刹海', 
-                  duration: '2小时',
-                  description: '体验老北京胡同文化',
-                  arFeatures: ['胡同文化讲解', '虚拟时光穿越']
-                }
-              ]
-            },
-            {
-              day: 2,
-              places: [
-                { 
-                  name: '天坛公园', 
-                  duration: '2小时',
-                  description: '探索古代祭天文化',
-                  arFeatures: ['祭天仪式重现', '古代建筑解析']
-                },
-                { 
-                  name: '国家博物馆', 
-                  duration: '3小时',
-                  description: '了解中国历史文明',
-                  arFeatures: ['文物3D展示', '出土过程演示']
-                },
-                { 
-                  name: '王府井大街', 
-                  duration: '2小时',
-                  description: '现代商业与传统文化交融',
-                  arFeatures: ['历史变迁展示', '美食推荐']
-                }
-              ]
+        // 根据表单值生成更个性化的路线
+        const days = values.days;
+        const interests = values.interests;
+        const budget = values.budget;
+        const travelers = values.travelers;
+        
+        // 根据兴趣生成不同类型的景点
+        const generatePlaces = (day, interests) => {
+          const placesByInterest = {
+            history: [
+              { 
+                name: '故宫博物院', 
+                duration: '3小时',
+                description: '参观紫禁城，了解明清历史',
+                arFeatures: ['皇宫3D复原', '虚拟角色互动']
+              },
+              { 
+                name: '天坛公园', 
+                duration: '2小时',
+                description: '探索古代祭天文化',
+                arFeatures: ['祭天仪式重现', '古代建筑解析']
+              },
+              { 
+                name: '国家博物馆', 
+                duration: '3小时',
+                description: '了解中国历史文明',
+                arFeatures: ['文物3D展示', '出土过程演示']
+              }
+            ],
+            architecture: [
+              { 
+                name: '北京国家大剧院', 
+                duration: '2小时',
+                description: '欣赏现代建筑艺术',
+                arFeatures: ['建筑结构解析', '虚拟导览']
+              },
+              { 
+                name: '颐和园', 
+                duration: '3小时',
+                description: '游览皇家园林',
+                arFeatures: ['园林布局讲解', '历史故事重现']
+              }
+            ],
+            nature: [
+              { 
+                name: '香山公园', 
+                duration: '3小时',
+                description: '欣赏自然风光',
+                arFeatures: ['植物识别', '季节变化展示']
+              },
+              { 
+                name: '北京植物园', 
+                duration: '2小时',
+                description: '探索植物多样性',
+                arFeatures: ['珍稀植物介绍', '生态系统展示']
+              }
+            ],
+            food: [
+              { 
+                name: '王府井小吃街', 
+                duration: '2小时',
+                description: '品尝北京特色小吃',
+                arFeatures: ['美食历史介绍', '制作工艺展示']
+              },
+              { 
+                name: '簋街', 
+                duration: '2小时',
+                description: '体验北京夜生活与美食',
+                arFeatures: ['人气餐厅推荐', '菜品营养分析']
+              }
+            ],
+            cultural: [
+              { 
+                name: '798艺术区', 
+                duration: '3小时',
+                description: '体验当代艺术文化',
+                arFeatures: ['艺术品解析', '创作过程展示']
+              },
+              { 
+                name: '什刹海', 
+                duration: '2小时',
+                description: '体验老北京胡同文化',
+                arFeatures: ['胡同文化讲解', '虚拟时光穿越']
+              }
+            ]
+          };
+          
+          // 根据用户选择的兴趣随机选择景点
+          let selectedPlaces = [];
+          
+          // 确保每天有2-3个景点
+          const placesPerDay = day === 1 ? 3 : 2;
+          
+          // 从用户选择的兴趣中选择景点
+          for (let interest of interests) {
+            if (placesByInterest[interest] && selectedPlaces.length < placesPerDay) {
+              // 随机选择一个该兴趣的景点
+              const randomIndex = Math.floor(Math.random() * placesByInterest[interest].length);
+              selectedPlaces.push(placesByInterest[interest][randomIndex]);
             }
-          ],
+          }
+          
+          // 如果选择的景点不足，从所有兴趣中补充
+          while (selectedPlaces.length < placesPerDay) {
+            const allInterests = Object.keys(placesByInterest);
+            const randomInterest = allInterests[Math.floor(Math.random() * allInterests.length)];
+            const places = placesByInterest[randomInterest];
+            const randomPlace = places[Math.floor(Math.random() * places.length)];
+            
+            // 确保不重复添加
+            if (!selectedPlaces.some(p => p.name === randomPlace.name)) {
+              selectedPlaces.push(randomPlace);
+            }
+          }
+          
+          return selectedPlaces;
+        };
+        
+        // 生成行程安排
+        const steps = [];
+        for (let i = 1; i <= days; i++) {
+          steps.push({
+            day: i,
+            places: generatePlaces(i, interests)
+          });
+        }
+        
+        // 根据预算生成不同的贴士
+        const budgetTips = {
+          low: '选择经济型住宿和公共交通可以节省开支',
+          medium: '可以考虑购买景点联票，性价比更高',
+          high: '推荐预约专业导游服务，获得更深入的文化体验'
+        };
+        
+        const mockResult = {
+          title: `${days}天${interests.includes('history') ? '历史文化' : '休闲'}路线`,
+          description: `为${travelers}位游客量身定制，特别关注${interests.map(i => interestOptions.find(opt => opt.value === i)?.label).join('、')}兴趣方向`,
+          steps: steps,
           tips: [
             '早晨游览景点，避开人流高峰',
             '准备舒适的鞋子，部分景点需要较多步行',
             '下载我们的AR应用，增强体验效果',
-            '每个景点都有AR标记点，请留意寻找'
+            budgetTips[budget] || '合理安排预算，确保旅行体验'
           ]
         };
         
@@ -206,6 +247,7 @@ const RoutePlanning = () => {
       
       updatedRoutes.push(routeToSave);
       localStorage.setItem('userSavedRoutes', JSON.stringify(updatedRoutes));
+      setSavedRoutes(updatedRoutes);
       
       message.success('路线已保存到我的行程，可在个人中心查看');
     } catch (e) {
@@ -256,8 +298,7 @@ const RoutePlanning = () => {
                     days: 2,
                     travelers: 2,
                     budget: 'medium',
-                    interests: ['history', 'cultural'],
-                    template: ''
+                    interests: ['history', 'cultural']
                   }}
                 >
                   <Row gutter={16}>
@@ -311,32 +352,6 @@ const RoutePlanning = () => {
                     rules={[{ required: true, message: '请至少选择一个兴趣偏好', type: 'array' }]}
                   >
                     <Checkbox.Group options={interestOptions} />
-                  </Form.Item>
-
-                  <Form.Item 
-                    name="template" 
-                    label="路线模板（可选）"
-                  >
-                    <div className="template-cards">
-                      <Row gutter={[16, 16]}>
-                        {routeTemplates.map(template => (
-                          <Col key={template.id} xs={24} sm={12}>
-                            <Card 
-                              hoverable 
-                              className="template-card"
-                              onClick={() => routeForm.setFieldsValue({ template: template.id })}
-                            >
-                              <div className="template-icon">{template.icon}</div>
-                              <div className="template-info">
-                                <div className="template-name">{template.name}</div>
-                                <div className="template-description">{template.description}</div>
-                              </div>
-                              <div className={`template-selected ${routeForm.getFieldValue('template') === template.id ? 'active' : ''}`}></div>
-                            </Card>
-                          </Col>
-                        ))}
-                      </Row>
-                    </div>
                   </Form.Item>
 
                   <Form.Item 
@@ -494,8 +509,7 @@ const RoutePlanning = () => {
                       title={item.name}
                       description={
                         <>
-                          <Rate disabled defaultValue={Math.round(item.rating)} />
-                          <span className="rating-score">{item.rating}</span>
+                          <div className="rating-score">{item.rating}分</div>
                           <div>{item.visitors}</div>
                         </>
                       }

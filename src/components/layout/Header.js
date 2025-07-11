@@ -10,12 +10,9 @@ import {
   SettingOutlined,
   BgColorsOutlined,
   CompassOutlined,
-  SolutionOutlined,
-  UsergroupAddOutlined,
   BellOutlined,
   MessageOutlined,
   GlobalOutlined,
-  CloseCircleOutlined,
   CalendarOutlined,
   CommentOutlined
 } from '@ant-design/icons';
@@ -362,12 +359,6 @@ const Header = ({ onChangeTheme, currentTheme }) => {
             </Menu.Item>
             <Menu.Item key="/route-planning" icon={<CompassOutlined />}>
               <Link to="/route-planning">路线规划</Link>
-            </Menu.Item>
-            <Menu.Item key="/expert-lectures" icon={<SolutionOutlined />}>
-              <Link to="/expert-lectures">专家讲座</Link>
-            </Menu.Item>
-            <Menu.Item key="/family-group" icon={<UsergroupAddOutlined />}>
-              <Link to="/family-group">家庭团组</Link>
             </Menu.Item>
             <Menu.Item key="/personal-center" icon={<UserOutlined />}>
               <Link to="/personal-center">个人中心</Link>
