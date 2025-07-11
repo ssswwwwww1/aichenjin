@@ -7,7 +7,7 @@ import {
   UserOutlined, TeamOutlined, PictureOutlined, VideoCameraOutlined,
   LikeOutlined, CommentOutlined, ShareAltOutlined, UploadOutlined,
   CalendarOutlined, FireOutlined, HeartOutlined, StarOutlined,
-  FlagOutlined, SmileOutlined, EnvironmentOutlined
+  FlagOutlined, SmileOutlined, EnvironmentOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
 import './FamilyGroup.css';
 
@@ -118,7 +118,7 @@ const FamilyGroup = () => {
   const [commentForm] = Form.useForm();
   
   // 从localStorage加载用户数据
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ id: 'guest', username: '游客', nickname: '游客', avatar: null });
   
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -153,11 +153,6 @@ const FamilyGroup = () => {
   
   // 处理发布帖子
   const handlePostSubmit = (values) => {
-    if (!user) {
-      message.warning('请先登录');
-      return;
-    }
-    
     console.log('发布内容:', values);
     console.log('上传的图片:', fileList);
     
@@ -169,8 +164,8 @@ const FamilyGroup = () => {
     // 生成新帖子
     const newPost = {
       id: Date.now(),
-      author: user.nickname,
-      avatar: user.avatar,
+      author: user.nickname || user.username,
+      avatar: user.avatar || 'https://via.placeholder.com/50',
       title: values.title,
       content: values.content,
       images: uploadedImages.length > 0 ? uploadedImages : [],
@@ -181,13 +176,29 @@ const FamilyGroup = () => {
       location: values.location || null
     };
     
-    // 简化版：直接在前端添加帖子
-    communityData.posts.unshift(newPost);
-    
-    message.success('发布成功！');
-    setPostModalVisible(false);
-    postForm.resetFields();
-    setFileList([]);
+    // 添加帖子到本地存储
+    try {
+      const savedPosts = localStorage.getItem('userPosts');
+      let updatedPosts = [];
+      
+      if (savedPosts) {
+        updatedPosts = JSON.parse(savedPosts);
+      }
+      
+      updatedPosts.push(newPost);
+      localStorage.setItem('userPosts', JSON.stringify(updatedPosts));
+      
+      // 更新显示
+      communityData.posts.unshift(newPost);
+      
+      message.success('发布成功！');
+      setPostModalVisible(false);
+      postForm.resetFields();
+      setFileList([]);
+    } catch (e) {
+      console.error('保存帖子失败', e);
+      message.error('发布失败，请稍后再试');
+    }
   };
   
   // 处理图片上传
@@ -197,8 +208,9 @@ const FamilyGroup = () => {
   
   // 处理活动报名
   const handleEventRegister = (event) => {
-    if (!user) {
-      message.warning('请先登录');
+    // 检查活动是否已满
+    if (event.participants >= event.maxParticipants) {
+      message.warning('该活动已报满，请选择其他活动');
       return;
     }
     
@@ -210,15 +222,41 @@ const FamilyGroup = () => {
   const handleEventSubmit = (values) => {
     console.log('活动报名信息:', values);
     
-    // 更新活动参与人数
-    const updatedEvents = communityData.events.map(event => {
-      if (event.id === selectedEvent.id) {
-        return { ...event, participants: event.participants + 1 };
-      }
-      return event;
-    });
+    if (!selectedEvent) {
+      message.error('未选择活动');
+      return;
+    }
     
-    communityData.events = updatedEvents;
+    // 更新活动参与人数
+    const updatedEvent = {
+      ...selectedEvent,
+      participants: selectedEvent.participants + values.participants
+    };
+    
+    // 更新本地数据
+    const eventIndex = communityData.events.findIndex(e => e.id === selectedEvent.id);
+    if (eventIndex !== -1) {
+      communityData.events[eventIndex] = updatedEvent;
+    }
+    
+    // 保存到localStorage
+    try {
+      const savedEvents = localStorage.getItem('registeredEvents') || '[]';
+      const registeredEvents = JSON.parse(savedEvents);
+      
+      registeredEvents.push({
+        eventId: selectedEvent.id,
+        eventTitle: selectedEvent.title,
+        registrationTime: new Date().toISOString(),
+        participants: values.participants,
+        contactName: values.contactName,
+        contactPhone: values.contactPhone
+      });
+      
+      localStorage.setItem('registeredEvents', JSON.stringify(registeredEvents));
+    } catch (e) {
+      console.error('保存活动报名信息失败', e);
+    }
     
     message.success('报名成功！我们会通过短信通知您活动详情');
     setEventModalVisible(false);
@@ -226,17 +264,16 @@ const FamilyGroup = () => {
   
   // 处理加入小组
   const handleJoinGroup = (group) => {
-    if (!user) {
-      message.warning('请先登录');
-      return;
-    }
-    
     setSelectedGroup(group);
     setGroupModalVisible(true);
   };
   
   // 确认加入小组
   const confirmJoinGroup = () => {
+    if (!selectedGroup) {
+      return;
+    }
+    
     if (joinedGroups.includes(selectedGroup.id)) {
       message.info('您已经是该小组成员');
       setGroupModalVisible(false);
@@ -253,192 +290,331 @@ const FamilyGroup = () => {
     
     communityData.groups = updatedGroups;
     
-    // 保存加入的小组
+    // 更新已加入小组列表
     const newJoinedGroups = [...joinedGroups, selectedGroup.id];
     setJoinedGroups(newJoinedGroups);
-    localStorage.setItem('joinedGroups', JSON.stringify(newJoinedGroups));
     
-    message.success(`成功加入"${selectedGroup.name}"小组`);
+    // 保存到localStorage
+    try {
+      localStorage.setItem('joinedGroups', JSON.stringify(newJoinedGroups));
+      message.success(`成功加入"${selectedGroup.name}"小组！`);
+    } catch (e) {
+      console.error('保存加入小组数据失败', e);
+      message.error('加入小组失败，请稍后再试');
+    }
+    
     setGroupModalVisible(false);
   };
   
-  // 处理帖子点赞
+  // 处理点赞
   const handleLike = (postId) => {
-    if (!user) {
-      message.warning('请先登录');
-      return;
-    }
+    // 切换点赞状态
+    const isLiked = likedPosts[postId];
+    const newLikedPosts = {
+      ...likedPosts,
+      [postId]: !isLiked
+    };
     
-    // 检查是否已经点赞
-    const hasLiked = likedPosts[postId];
-    
-    // 更新点赞状态
-    const newLikedPosts = { ...likedPosts };
-    
-    if (hasLiked) {
-      // 取消点赞
-      delete newLikedPosts[postId];
-      
-      // 更新帖子点赞数
-      communityData.posts = communityData.posts.map(post => {
-        if (post.id === postId) {
-          return { ...post, likes: Math.max(0, post.likes - 1) };
-        }
-        return post;
-      });
-    } else {
-      // 点赞
-      newLikedPosts[postId] = true;
-      
-      // 更新帖子点赞数
-      communityData.posts = communityData.posts.map(post => {
-        if (post.id === postId) {
-          return { ...post, likes: post.likes + 1 };
-        }
-        return post;
-      });
-    }
-    
-    // 保存点赞状态
-    setLikedPosts(newLikedPosts);
-    localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
-  };
-  
-  // 打开评论模态框
-  const openCommentModal = (post) => {
-    if (!user) {
-      message.warning('请先登录');
-      return;
-    }
-    
-    setSelectedPost(post);
-    setCommentModalVisible(true);
-  };
-  
-  // 提交评论
-  const handleCommentSubmit = (values) => {
-    console.log('评论内容:', values);
-    
-    // 更新帖子评论数
-    communityData.posts = communityData.posts.map(post => {
-      if (post.id === selectedPost.id) {
-        return { ...post, comments: post.comments + 1 };
+    // 更新点赞数
+    const updatedPosts = communityData.posts.map(post => {
+      if (post.id === postId) {
+        return {
+          ...post,
+          likes: isLiked ? post.likes - 1 : post.likes + 1
+        };
       }
       return post;
     });
     
+    communityData.posts = updatedPosts;
+    setLikedPosts(newLikedPosts);
+    
+    // 保存到localStorage
+    try {
+      localStorage.setItem('likedPosts', JSON.stringify(newLikedPosts));
+    } catch (e) {
+      console.error('保存点赞数据失败', e);
+    }
+    
+    // 显示消息
+    if (!isLiked) {
+      message.success('点赞成功');
+    }
+  };
+  
+  // 打开评论模态框
+  const openCommentModal = (post) => {
+    setSelectedPost(post);
+    setCommentModalVisible(true);
+    commentForm.resetFields();
+  };
+  
+  // 提交评论
+  const handleCommentSubmit = (values) => {
+    if (!selectedPost) return;
+    
+    console.log('评论内容:', values);
+    
+    // 更新帖子评论数
+    const updatedPosts = communityData.posts.map(post => {
+      if (post.id === selectedPost.id) {
+        return {
+          ...post,
+          comments: post.comments + 1
+        };
+      }
+      return post;
+    });
+    
+    communityData.posts = updatedPosts;
+    
+    // 保存评论到localStorage
+    try {
+      const savedComments = localStorage.getItem('postComments') || '{}';
+      const comments = JSON.parse(savedComments);
+      
+      const postComments = comments[selectedPost.id] || [];
+      postComments.push({
+        id: Date.now(),
+        postId: selectedPost.id,
+        content: values.content,
+        user: user.nickname || user.username,
+        avatar: user.avatar || 'https://via.placeholder.com/40',
+        time: new Date().toISOString()
+      });
+      
+      comments[selectedPost.id] = postComments;
+      localStorage.setItem('postComments', JSON.stringify(comments));
+    } catch (e) {
+      console.error('保存评论数据失败', e);
+    }
+    
     message.success('评论成功');
     setCommentModalVisible(false);
-    commentForm.resetFields();
   };
   
   // 处理分享
   const handleShare = (post) => {
-    if (!user) {
-      message.warning('请先登录');
-      return;
-    }
-    
-    // 模拟分享功能
-    message.success('分享链接已复制到剪贴板');
+    // 实际项目中应实现分享功能
+    message.info('分享功能开发中');
+  };
+  
+  // 检查是否已加入小组
+  const isGroupJoined = (groupId) => {
+    return joinedGroups.includes(groupId);
+  };
+  
+  // 检查帖子是否已点赞
+  const isPostLiked = (postId) => {
+    return !!likedPosts[postId];
   };
   
   return (
-    <div className="family-group-container">
+    <div className="family-group-page">
       <div className="page-header">
-        <Title level={2}>亲子社群</Title>
-        <Text type="secondary">分享育儿经验，参与文化活动，共同成长</Text>
+        <div className="container">
+          <Title level={1}>家庭亲子团</Title>
+          <Paragraph className="page-description">
+            发现和分享亲子文化活动，与家庭一起体验传统文化的魅力
+          </Paragraph>
+        </div>
       </div>
       
-      <Tabs activeKey={activeTab} onChange={setActiveTab} className="family-tabs">
-        <TabPane tab={<span><TeamOutlined /> 社区动态</span>} key="community">
-          <div className="post-actions">
-            <Button 
-              type="primary" 
-              icon={<UploadOutlined />} 
-              size="large"
-              onClick={() => {
-                if (!user) {
-                  message.warning('请先登录');
-                  return;
-                }
-                setPostModalVisible(true);
-              }}
-            >
-              发布内容
-            </Button>
-          </div>
-          
-          <List
-            itemLayout="vertical"
-            size="large"
-            dataSource={communityData.posts}
-            renderItem={item => (
-              <Card className="post-card" key={item.id}>
-                <Meta
-                  avatar={<Avatar src={item.avatar} size={50}>{item.author.charAt(0)}</Avatar>}
-                  title={<a href="#">{item.title}</a>}
-                  description={
-                    <div className="post-meta">
-                      <span className="author-name">{item.author}</span>
-                      <span className="post-time">{item.time}</span>
-                      {item.location && (
-                        <span className="post-location">
-                          <EnvironmentOutlined /> {item.location}
-                        </span>
-                      )}
-                    </div>
-                  }
-                />
-                <Paragraph className="post-content">{item.content}</Paragraph>
-                
-                {item.images && item.images.length > 0 && (
-                  <div className="post-images">
-                    <Row gutter={[8, 8]}>
-                      {item.images.map((img, index) => (
-                        <Col span={8} key={index}>
-                          <div className="image-container">
-                            <img src={img} alt={`图片${index + 1}`} />
-                          </div>
-                        </Col>
-                      ))}
-                    </Row>
+      <div className="container main-content">
+        <Tabs activeKey={activeTab} onChange={setActiveTab}>
+          <TabPane tab="文化社区" key="community">
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={16}>
+                <Card className="post-box">
+                  <div className="post-form-header">
+                    <Avatar src={user.avatar} icon={!user.avatar && <UserOutlined />} />
+                    <Button 
+                      type="dashed" 
+                      block 
+                      onClick={() => setPostModalVisible(true)}
+                      className="post-trigger"
+                    >
+                      分享您的亲子文化体验...
+                    </Button>
                   </div>
-                )}
+                  <div className="post-actions">
+                    <Button icon={<PictureOutlined />} onClick={() => setPostModalVisible(true)}>
+                      图片
+                    </Button>
+                    <Button icon={<VideoCameraOutlined />} onClick={() => setPostModalVisible(true)}>
+                      视频
+                    </Button>
+                    <Button icon={<EnvironmentOutlined />} onClick={() => setPostModalVisible(true)}>
+                      位置
+                    </Button>
+                  </div>
+                </Card>
                 
-                <div className="post-tags">
-                  {item.tags.map(tag => (
-                    <Tag key={tag}>{tag}</Tag>
+                <Divider orientation="left">社区动态</Divider>
+                
+                {communityData.posts.map(post => (
+                  <Card 
+                    key={post.id} 
+                    className="post-card"
+                    hoverable
+                  >
+                    <div className="post-header">
+                      <div className="post-author">
+                        <Avatar src={post.avatar} />
+                        <div className="author-info">
+                          <div className="author-name">{post.author}</div>
+                          <div className="post-time">{post.time}</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="post-content">
+                      <div className="post-title">{post.title}</div>
+                      <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: '展开' }}>
+                        {post.content}
+                      </Paragraph>
+                      
+                      {post.images && post.images.length > 0 && (
+                        <div className="post-images">
+                          <Row gutter={[8, 8]}>
+                            {post.images.map((image, index) => (
+                              <Col 
+                                key={index} 
+                                xs={post.images.length === 1 ? 24 : 12} 
+                                md={post.images.length === 1 ? 24 : 8}
+                              >
+                                <div 
+                                  className="image-item" 
+                                  style={{ backgroundImage: `url(${image})` }}
+                                />
+                              </Col>
+                            ))}
+                          </Row>
+                        </div>
+                      )}
+                      
+                      {post.location && (
+                        <div className="post-location">
+                          <EnvironmentOutlined /> {post.location}
+                        </div>
+                      )}
+                      
+                      <div className="post-tags">
+                        {post.tags.map((tag, index) => (
+                          <Tag key={index}>{tag}</Tag>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="post-actions-bar">
+                      <Button 
+                        icon={<LikeOutlined />} 
+                        className={`action-btn ${isPostLiked(post.id) ? 'active' : ''}`}
+                        onClick={() => handleLike(post.id)}
+                      >
+                        赞 ({post.likes})
+                      </Button>
+                      <Button 
+                        icon={<CommentOutlined />} 
+                        className="action-btn"
+                        onClick={() => openCommentModal(post)}
+                      >
+                        评论 ({post.comments})
+                      </Button>
+                      <Button 
+                        icon={<ShareAltOutlined />} 
+                        className="action-btn"
+                        onClick={() => handleShare(post)}
+                      >
+                        分享
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </Col>
+              
+              <Col xs={24} md={8}>
+                <Card 
+                  title={<><CalendarOutlined /> 亲子文化活动</>} 
+                  extra={<a href="#!">更多</a>}
+                  className="side-card"
+                >
+                  {communityData.events.map(event => (
+                    <Card 
+                      key={event.id}
+                      hoverable
+                      className="event-card"
+                      cover={
+                        <div className="event-cover" style={{ backgroundImage: `url(${event.cover})` }}>
+                          {event.participants >= event.maxParticipants && (
+                            <div className="event-full-badge">已满</div>
+                          )}
+                        </div>
+                      }
+                    >
+                      <div className="event-title">{event.title}</div>
+                      <div className="event-info">
+                        <div><CalendarOutlined /> {event.date}</div>
+                        <div><ClockCircleOutlined /> {event.time}</div>
+                        <div><EnvironmentOutlined /> {event.location}</div>
+                        <div><TeamOutlined /> {event.participants}/{event.maxParticipants}人</div>
+                      </div>
+                      <div className="event-actions">
+                        <Button 
+                          type="primary" 
+                          onClick={() => handleEventRegister(event)}
+                          disabled={event.participants >= event.maxParticipants}
+                          block
+                        >
+                          {event.participants >= event.maxParticipants ? '名额已满' : '立即报名'}
+                        </Button>
+                      </div>
+                    </Card>
                   ))}
-                </div>
+                </Card>
                 
-                <div className="post-actions">
-                  <Button 
-                    type={likedPosts[item.id] ? "primary" : "text"} 
-                    icon={<LikeOutlined />}
-                    onClick={() => handleLike(item.id)}
-                  >
-                    点赞 {item.likes}
-                  </Button>
-                  <Button 
-                    type="text" 
-                    icon={<CommentOutlined />}
-                    onClick={() => openCommentModal(item)}
-                  >
-                    评论 {item.comments}
-                  </Button>
-                  <Button 
-                    type="text" 
-                    icon={<ShareAltOutlined />}
-                    onClick={() => handleShare(item)}
-                  >
-                    分享
-                  </Button>
-                </div>
-              </Card>
-            )}
-          />
-        </TabPane>
+                <Card 
+                  title={<><TeamOutlined /> 亲子兴趣小组</>} 
+                  extra={<a href="#!">更多</a>}
+                  className="side-card"
+                  style={{ marginTop: 24 }}
+                >
+                  <List
+                    dataSource={communityData.groups}
+                    renderItem={group => (
+                      <List.Item className="group-item">
+                        <List.Item.Meta
+                          avatar={<Avatar src={group.avatar} size={40} />}
+                          title={group.name}
+                          description={
+                            <>
+                              <div className="group-stats">
+                                <span>{group.members} 成员</span>
+                                <span>{group.topics} 话题</span>
+                              </div>
+                              <div className="group-tags">
+                                {group.tags.slice(0, 2).map((tag, index) => (
+                                  <Tag key={index}>{tag}</Tag>
+                                ))}
+                              </div>
+                            </>
+                          }
+                        />
+                        <Button 
+                          type={isGroupJoined(group.id) ? "default" : "primary"}
+                          size="small"
+                          onClick={() => handleJoinGroup(group)}
+                          disabled={isGroupJoined(group.id)}
+                        >
+                          {isGroupJoined(group.id) ? '已加入' : '加入'}
+                        </Button>
+                      </List.Item>
+                    )}
+                  />
+                </Card>
+              </Col>
+            </Row>
+          </TabPane>
         
         <TabPane tab={<span><CalendarOutlined /> 亲子活动</span>} key="events">
           <Row gutter={[24, 24]}>

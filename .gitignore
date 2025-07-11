@@ -34,3 +34,4 @@ yarn-error.log*
 
 # cache files
 .eslintcache 
+node_modules

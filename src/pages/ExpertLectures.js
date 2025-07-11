@@ -99,7 +99,7 @@ const ExpertLectures = () => {
   const [showDanmaku, setShowDanmaku] = useState(true);
   const [lectureModalVisible, setLectureModalVisible] = useState(false);
   const [reservationModalVisible, setReservationModalVisible] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ id: 'guest', username: '游客', avatar: null }); // 提供默认用户
   const [userRating, setUserRating] = useState(0);
   const [reservedLectures, setReservedLectures] = useState([]);
   const [discussionInput, setDiscussionInput] = useState('');
@@ -153,18 +153,13 @@ const ExpertLectures = () => {
   
   // 发送弹幕
   const sendDanmaku = () => {
-    if (!user) {
-      message.warning('请先登录后发送弹幕');
-      return;
-    }
-    
     if (!danmakuInput.trim()) {
       message.warning('弹幕内容不能为空');
       return;
     }
     
     const newDanmaku = {
-      id: danmaku.length + 1,
+      id: Date.now(),
       content: danmakuInput,
       color: '#fff',
       time: Math.floor(Math.random() * 100), // 模拟视频进度
@@ -197,7 +192,9 @@ const ExpertLectures = () => {
     
     // 弹幕动画结束后移除元素
     setTimeout(() => {
-      danmakuElement.remove();
+      if (danmakuElement.parentNode) {
+        danmakuElement.remove();
+      }
     }, 8000);
   };
   
@@ -207,20 +204,19 @@ const ExpertLectures = () => {
     setLectureModalVisible(true);
     setUserRating(0);
     
-    // 启动弹幕播放
+    // 停止之前的定时器
+    if (danmakuTimer.current) {
+      clearInterval(danmakuTimer.current);
+    }
+    
+    // 只有对直播讲座启动弹幕播放
     if (lecture.status === 'live') {
-      if (danmakuTimer.current) {
-        clearInterval(danmakuTimer.current);
-      }
-      
       // 模拟定时弹幕
       let index = 0;
       danmakuTimer.current = setInterval(() => {
         if (index < danmaku.length && showDanmaku) {
           displayNewDanmaku(danmaku[index]);
-          index++;
-        } else {
-          clearInterval(danmakuTimer.current);
+          index = (index + 1) % danmaku.length; // 循环播放
         }
       }, 2000);
     }
@@ -228,11 +224,6 @@ const ExpertLectures = () => {
   
   // 预约讲座
   const handleReservation = (lecture) => {
-    if (!user) {
-      message.warning('请先登录后预约讲座');
-      return;
-    }
-    
     setSelectedLecture(lecture);
     setReservationModalVisible(true);
   };
@@ -242,232 +233,302 @@ const ExpertLectures = () => {
     console.log('预约信息:', values);
     
     // 更新已预约的讲座
-    const newReservations = [...reservedLectures, selectedLecture.id];
-    setReservedLectures(newReservations);
-    localStorage.setItem('reservedLectures', JSON.stringify(newReservations));
-    
-    message.success('讲座预约成功，我们会通过短信提醒您');
-    setReservationModalVisible(false);
-  };
-  
-  // 切换弹幕显示
-  const toggleDanmaku = () => {
-    setShowDanmaku(!showDanmaku);
-    if (danmakuContainerRef.current) {
-      danmakuContainerRef.current.style.display = !showDanmaku ? 'block' : 'none';
+    if (selectedLecture) {
+      const newReservations = [...reservedLectures, selectedLecture.id];
+      setReservedLectures(newReservations);
+      
+      // 保存到localStorage
+      try {
+        localStorage.setItem('reservedLectures', JSON.stringify(newReservations));
+      } catch (e) {
+        console.error('保存预约数据失败', e);
+      }
+      
+      message.success('讲座预约成功，我们会通过短信提醒您');
+      setReservationModalVisible(false);
     }
   };
   
-  // 模拟播放/暂停视频
+  // 开关弹幕显示
+  const toggleDanmaku = () => {
+    setShowDanmaku(!showDanmaku);
+    
+    if (!showDanmaku && danmakuContainerRef.current) {
+      // 清空现有弹幕
+      while (danmakuContainerRef.current.firstChild) {
+        danmakuContainerRef.current.removeChild(danmakuContainerRef.current.firstChild);
+      }
+    }
+  };
+  
+  // 切换视频播放状态
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
-    // 实际项目中应该控制视频播放/暂停
+    // 在真实环境中，这里应该控制视频元素
+    if (videoPlayerRef.current) {
+      if (isPlaying) {
+        videoPlayerRef.current.pause();
+      } else {
+        videoPlayerRef.current.play();
+      }
+    }
   };
   
   // 提交讨论
   const submitDiscussion = () => {
-    if (!user) {
-      message.warning('请先登录后参与讨论');
-      return;
-    }
-    
     if (!discussionInput.trim()) {
       message.warning('评论内容不能为空');
       return;
     }
     
+    if (!selectedLecture) {
+      return;
+    }
+    
+    // 创建新讨论
     const newDiscussion = {
-      user: user.nickname,
-      avatar: user.avatar,
+      id: Date.now(),
       content: discussionInput,
-      time: '刚刚',
+      user: user.username,
+      avatar: user.avatar || 'https://via.placeholder.com/40',
+      time: new Date().toISOString(),
       likes: 0
     };
     
-    // 获取或初始化当前讲座的评论
-    const lectureDiscussions = discussions[selectedLecture.id] || [];
-    const updatedDiscussions = [newDiscussion, ...lectureDiscussions];
-    
-    // 更新讨论
-    const newDiscussions = { 
-      ...discussions, 
-      [selectedLecture.id]: updatedDiscussions 
+    // 更新讨论列表
+    const lectureId = selectedLecture.id;
+    const updatedDiscussions = {
+      ...discussions,
+      [lectureId]: [
+        ...(discussions[lectureId] || []),
+        newDiscussion
+      ]
     };
     
-    setDiscussions(newDiscussions);
-    localStorage.setItem('lectureDiscussions', JSON.stringify(newDiscussions));
+    setDiscussions(updatedDiscussions);
     setDiscussionInput('');
+    
+    // 保存到localStorage
+    try {
+      localStorage.setItem('lectureDiscussions', JSON.stringify(updatedDiscussions));
+    } catch (e) {
+      console.error('保存讨论数据失败', e);
+    }
     
     message.success('评论发布成功');
   };
   
-  // 获取当前讲座的讨论
+  // 获取讲座评论
   const getLectureDiscussions = () => {
     if (!selectedLecture) return [];
     return discussions[selectedLecture.id] || [];
   };
-
+  
+  // 格式化时间
+  const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+    
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 1) {
+        return '今天';
+      } else if (diffDays < 2) {
+        return '昨天';
+      } else if (diffDays < 7) {
+        return `${diffDays}天前`;
+      } else {
+        return date.toLocaleDateString();
+      }
+    } catch (e) {
+      return timestamp;
+    }
+  };
+  
+  // 检查讲座是否已预约
+  const isLectureReserved = (lectureId) => {
+    return reservedLectures.includes(lectureId);
+  };
+  
   return (
-    <div className="expert-lectures-container">
+    <div className="expert-lectures-page">
       <div className="page-header">
-        <Title level={2}>专家讲座</Title>
-        <Text type="secondary">探索文化瑰宝，聆听专家讲解，互动交流学习</Text>
+        <div className="container">
+          <Title level={1}>文化专家讲座</Title>
+          <Paragraph>
+            聆听文化专家分享，了解传统文化的精髓与魅力
+          </Paragraph>
+        </div>
       </div>
       
-      <Tabs activeKey={activeTab} onChange={setActiveTab} className="lectures-tabs">
-        <TabPane tab={<span><FireOutlined /> 正在直播</span>} key="live">
-          <Row gutter={[24, 24]}>
-            {filteredLectures('live').map(lecture => (
-              <Col xs={24} sm={12} md={8} key={lecture.id}>
-                <Card 
-                  hoverable 
-                  cover={
-                    <div className="lecture-card-cover">
-                      <img alt={lecture.title} src={lecture.coverImage} />
-                      <Badge count="直播中" className="live-badge" />
-                      <div className="lecture-card-overlay">
-                        <Button 
-                          type="primary" 
-                          icon={<PlayCircleOutlined />}
-                          onClick={() => openLectureDetails(lecture)}
-                        >
-                          立即观看
-                        </Button>
+      <div className="container main-content">
+        <Tabs activeKey={activeTab} onChange={setActiveTab}>
+          <TabPane tab="即将开讲" key="upcoming">
+            <Row gutter={[24, 24]}>
+              {filteredLectures('upcoming').map(lecture => (
+                <Col xs={24} sm={12} md={8} key={lecture.id}>
+                  <Card
+                    hoverable
+                    cover={
+                      <div className="lecture-cover" style={{ backgroundImage: `url(${lecture.coverImage})` }}>
+                        <Badge.Ribbon text="即将开讲" color="green" />
                       </div>
-                    </div>
-                  }
-                  className="lecture-card"
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={lecture.avatar} size="large" />}
-                    title={lecture.title}
-                    description={
-                      <>
-                        <div className="lecture-speaker">
-                          {lecture.speaker} · {lecture.speakerTitle}
-                        </div>
-                        <div className="lecture-meta">
-                          <span><CalendarOutlined /> {lecture.date}</span>
-                          <span><ClockCircleOutlined /> {lecture.time}</span>
-                        </div>
-                        <div className="lecture-tags">
-                          {lecture.tags.map((tag, index) => (
-                            <Tag key={index}>{tag}</Tag>
-                          ))}
-                        </div>
-                        <div className="lecture-stats">
-                          <span><TeamOutlined /> {lecture.participants}人参与</span>
-                          <span><LikeOutlined /> {lecture.likes}人点赞</span>
-                        </div>
-                      </>
                     }
-                  />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </TabPane>
-        
-        <TabPane tab={<span><CalendarOutlined /> 即将开始</span>} key="upcoming">
-          <Row gutter={[24, 24]}>
-            {filteredLectures('upcoming').map(lecture => (
-              <Col xs={24} sm={12} md={8} key={lecture.id}>
-                <Card 
-                  hoverable 
-                  cover={
-                    <div className="lecture-card-cover">
-                      <img alt={lecture.title} src={lecture.coverImage} />
-                      <div className="lecture-card-overlay">
-                        <Button 
-                          type="primary" 
-                          onClick={() => handleReservation(lecture)}
-                          disabled={reservedLectures.includes(lecture.id)}
-                        >
-                          {reservedLectures.includes(lecture.id) ? '已预约' : '预约讲座'}
-                        </Button>
+                    className="lecture-card"
+                  >
+                    <Card.Meta
+                      title={lecture.title}
+                      description={
+                        <>
+                          <div className="lecture-meta">
+                            <Avatar src={lecture.avatar} /> 
+                            <span>{lecture.speaker}</span>
+                            <div className="speaker-title">{lecture.speakerTitle}</div>
+                          </div>
+                          <div className="lecture-info">
+                            <div><CalendarOutlined /> {lecture.date} {lecture.time}</div>
+                            <div><ClockCircleOutlined /> {lecture.duration}分钟</div>
+                            <div><TeamOutlined /> {lecture.participants}人参与</div>
+                          </div>
+                          <div className="lecture-tags">
+                            {lecture.tags.map((tag, index) => (
+                              <Tag key={index}>{tag}</Tag>
+                            ))}
+                          </div>
+                        </>
+                      }
+                    />
+                    <div className="card-actions">
+                      <Button 
+                        type="primary" 
+                        onClick={() => handleReservation(lecture)}
+                        disabled={isLectureReserved(lecture.id)}
+                      >
+                        {isLectureReserved(lecture.id) ? '已预约' : '预约讲座'}
+                      </Button>
+                      <Button onClick={() => openLectureDetails(lecture)}>
+                        详情
+                      </Button>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </TabPane>
+          
+          <TabPane tab="正在直播" key="live">
+            <Row gutter={[24, 24]}>
+              {filteredLectures('live').map(lecture => (
+                <Col xs={24} sm={12} key={lecture.id}>
+                  <Card
+                    hoverable
+                    cover={
+                      <div className="lecture-cover live-cover" style={{ backgroundImage: `url(${lecture.coverImage})` }}>
+                        <Badge.Ribbon text="直播中" color="red" />
+                        <div className="play-button" onClick={() => openLectureDetails(lecture)}>
+                          <PlayCircleOutlined />
+                        </div>
                       </div>
-                    </div>
-                  }
-                  className="lecture-card"
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={lecture.avatar} size="large" />}
-                    title={lecture.title}
-                    description={
-                      <>
-                        <div className="lecture-speaker">
-                          {lecture.speaker} · {lecture.speakerTitle}
-                        </div>
-                        <div className="lecture-meta">
-                          <span><CalendarOutlined /> {lecture.date}</span>
-                          <span><ClockCircleOutlined /> {lecture.time}</span>
-                        </div>
-                        <div className="lecture-tags">
-                          {lecture.tags.map((tag, index) => (
-                            <Tag key={index}>{tag}</Tag>
-                          ))}
-                        </div>
-                      </>
                     }
-                  />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </TabPane>
-        
-        <TabPane tab={<span><VideoCameraOutlined /> 录播回顾</span>} key="recorded">
-          <Row gutter={[24, 24]}>
-            {filteredLectures('recorded').map(lecture => (
-              <Col xs={24} sm={12} md={8} key={lecture.id}>
-                <Card 
-                  hoverable 
-                  cover={
-                    <div className="lecture-card-cover">
-                      <img alt={lecture.title} src={lecture.coverImage} />
-                      <div className="lecture-card-overlay">
-                        <Button 
-                          type="primary" 
-                          icon={<PlayCircleOutlined />}
-                          onClick={() => openLectureDetails(lecture)}
-                        >
-                          观看回放
-                        </Button>
+                    className="lecture-card live-card"
+                  >
+                    <Card.Meta
+                      title={lecture.title}
+                      description={
+                        <>
+                          <div className="lecture-meta">
+                            <Avatar src={lecture.avatar} /> 
+                            <span>{lecture.speaker}</span>
+                            <div className="speaker-title">{lecture.speakerTitle}</div>
+                          </div>
+                          <div className="lecture-info">
+                            <div><TeamOutlined /> <span className="participants-count">{lecture.participants}</span> 人正在观看</div>
+                          </div>
+                          <div className="lecture-tags">
+                            {lecture.tags.map((tag, index) => (
+                              <Tag key={index}>{tag}</Tag>
+                            ))}
+                          </div>
+                        </>
+                      }
+                    />
+                    <div className="card-actions">
+                      <Button 
+                        type="primary" 
+                        icon={<PlayCircleOutlined />}
+                        onClick={() => openLectureDetails(lecture)}
+                      >
+                        观看直播
+                      </Button>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+              {filteredLectures('live').length === 0 && (
+                <Col span={24}>
+                  <div className="empty-state">
+                    <VideoCameraOutlined className="empty-icon" />
+                    <Title level={4}>暂无正在直播的讲座</Title>
+                    <Paragraph>请关注即将开讲的讲座，或观看历史讲座回放</Paragraph>
+                  </div>
+                </Col>
+              )}
+            </Row>
+          </TabPane>
+          
+          <TabPane tab="往期回放" key="recorded">
+            <Row gutter={[24, 24]}>
+              {filteredLectures('recorded').map(lecture => (
+                <Col xs={24} sm={12} md={8} key={lecture.id}>
+                  <Card
+                    hoverable
+                    cover={
+                      <div className="lecture-cover" style={{ backgroundImage: `url(${lecture.coverImage})` }}>
+                        <div className="play-button" onClick={() => openLectureDetails(lecture)}>
+                          <PlayCircleOutlined />
+                        </div>
                       </div>
-                    </div>
-                  }
-                  className="lecture-card"
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={lecture.avatar} size="large" />}
-                    title={lecture.title}
-                    description={
-                      <>
-                        <div className="lecture-speaker">
-                          {lecture.speaker} · {lecture.speakerTitle}
-                        </div>
-                        <div className="lecture-meta">
-                          <span><CalendarOutlined /> {lecture.date}</span>
-                          <span><ClockCircleOutlined /> {lecture.duration}分钟</span>
-                        </div>
-                        <div className="lecture-tags">
-                          {lecture.tags.map((tag, index) => (
-                            <Tag key={index}>{tag}</Tag>
-                          ))}
-                        </div>
-                        <div className="lecture-stats">
-                          <span><TeamOutlined /> {lecture.participants}人观看</span>
-                          <span><LikeOutlined /> {lecture.likes}人点赞</span>
-                        </div>
-                      </>
                     }
-                  />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </TabPane>
-      </Tabs>
+                    className="lecture-card recorded-card"
+                  >
+                    <Card.Meta
+                      title={lecture.title}
+                      description={
+                        <>
+                          <div className="lecture-meta">
+                            <Avatar src={lecture.avatar} /> 
+                            <span>{lecture.speaker}</span>
+                          </div>
+                          <div className="lecture-stats">
+                            <div><TeamOutlined /> {lecture.participants}次观看</div>
+                            <div><LikeOutlined /> {lecture.likes}人点赞</div>
+                          </div>
+                          <div className="lecture-tags">
+                            {lecture.tags.map((tag, index) => (
+                              <Tag key={index}>{tag}</Tag>
+                            ))}
+                          </div>
+                        </>
+                      }
+                    />
+                    <div className="card-actions">
+                      <Button 
+                        type="primary" 
+                        icon={<PlayCircleOutlined />}
+                        onClick={() => openLectureDetails(lecture)}
+                      >
+                        观看回放
+                      </Button>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </TabPane>
+        </Tabs>
+      </div>
       
       {/* 讲座观看模态框 */}
       <Modal
@@ -612,7 +673,7 @@ const ExpertLectures = () => {
                         <List.Item.Meta
                           avatar={<Avatar src={item.avatar}>{item.user.charAt(0)}</Avatar>}
                           title={item.user}
-                          description={item.time}
+                          description={formatTime(item.time)}
                         />
                         {item.content}
                       </List.Item>

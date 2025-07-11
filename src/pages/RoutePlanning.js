@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Typography, Row, Col, Card, Form, Select, Button, Input, 
   Checkbox, Steps, message, Spin, Tag, List, Timeline, Divider 
@@ -85,6 +85,19 @@ const RoutePlanning = () => {
     }
   ];
 
+  // 当组件加载时，从localStorage获取保存的路线
+  useEffect(() => {
+    const savedUserRoutes = localStorage.getItem('userSavedRoutes');
+    if (savedUserRoutes) {
+      try {
+        // 暂时不覆盖示例数据，仅用于演示功能正常工作
+        console.log('从localStorage加载的路线:', JSON.parse(savedUserRoutes));
+      } catch (e) {
+        console.error('解析保存的路线数据失败', e);
+      }
+    }
+  }, []);
+
   const handleAiRouteSubmit = () => {
     routeForm.validateFields().then(values => {
       setAiRouteLoading(true);
@@ -155,6 +168,9 @@ const RoutePlanning = () => {
         setAiRouteResult(mockResult);
         setAiRouteLoading(false);
       }, 2000);
+    }).catch(errorInfo => {
+      message.error('请填写必要的信息');
+      console.log('表单验证失败:', errorInfo);
     });
   };
   
@@ -165,7 +181,37 @@ const RoutePlanning = () => {
   };
   
   const saveRoute = () => {
-    message.success('路线已保存到我的行程，可在个人中心查看');
+    if (!aiRouteResult) {
+      message.warning('请先生成路线');
+      return;
+    }
+    
+    // 保存路线到localStorage
+    const routeToSave = {
+      id: Date.now(),
+      title: aiRouteResult.title,
+      days: routeForm.getFieldValue('days'),
+      created: new Date().toISOString().split('T')[0],
+      description: aiRouteResult.description
+    };
+    
+    try {
+      // 获取已有的保存路线
+      const existingSavedRoutes = localStorage.getItem('userSavedRoutes');
+      let updatedRoutes = [];
+      
+      if (existingSavedRoutes) {
+        updatedRoutes = JSON.parse(existingSavedRoutes);
+      }
+      
+      updatedRoutes.push(routeToSave);
+      localStorage.setItem('userSavedRoutes', JSON.stringify(updatedRoutes));
+      
+      message.success('路线已保存到我的行程，可在个人中心查看');
+    } catch (e) {
+      console.error('保存路线失败', e);
+      message.error('保存失败，请稍后再试');
+    }
   };
   
   const previewRoute = () => {
@@ -248,59 +294,78 @@ const RoutePlanning = () => {
                   </Row>
 
                   <Form.Item 
+                    name="budget" 
+                    label="预算范围" 
+                    rules={[{ required: true, message: '请选择预算范围' }]}
+                  >
+                    <Select>
+                      <Option value="low">经济型</Option>
+                      <Option value="medium">标准型</Option>
+                      <Option value="high">高端型</Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item 
                     name="interests" 
                     label="兴趣偏好" 
-                    rules={[{ required: true, message: '请至少选择一项兴趣' }]}
+                    rules={[{ required: true, message: '请至少选择一个兴趣偏好', type: 'array' }]}
                   >
                     <Checkbox.Group options={interestOptions} />
                   </Form.Item>
 
-                  <Form.Item name="template" label="选择路线模板">
-                    <Select placeholder="选择一个路线模板（可选）">
-                      <Option value="">不使用模板</Option>
-                      {routeTemplates.map(template => (
-                        <Option key={template.id} value={template.id}>
-                          {template.name}
-                        </Option>
-                      ))}
-                    </Select>
+                  <Form.Item 
+                    name="template" 
+                    label="路线模板（可选）"
+                  >
+                    <div className="template-cards">
+                      <Row gutter={[16, 16]}>
+                        {routeTemplates.map(template => (
+                          <Col key={template.id} xs={24} sm={12}>
+                            <Card 
+                              hoverable 
+                              className="template-card"
+                              onClick={() => routeForm.setFieldsValue({ template: template.id })}
+                            >
+                              <div className="template-icon">{template.icon}</div>
+                              <div className="template-info">
+                                <div className="template-name">{template.name}</div>
+                                <div className="template-description">{template.description}</div>
+                              </div>
+                              <div className={`template-selected ${routeForm.getFieldValue('template') === template.id ? 'active' : ''}`}></div>
+                            </Card>
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
                   </Form.Item>
 
-                  <Form.Item name="budget" label="预算水平">
-                    <Select>
-                      <Option value="low">经济实惠型</Option>
-                      <Option value="medium">中等消费型</Option>
-                      <Option value="high">高端体验型</Option>
-                    </Select>
-                  </Form.Item>
-
-                  <Form.Item name="specialRequests" label="特殊需求">
+                  <Form.Item 
+                    name="additionalRequirements" 
+                    label="额外需求（可选）"
+                  >
                     <TextArea 
                       rows={4} 
-                      placeholder="例如：有老人和孩子同行，需要无障碍设施，对某类文化特别感兴趣等"
+                      placeholder="请输入您的特殊需求，如无障碍设施、儿童友好场所等"
                     />
                   </Form.Item>
 
-                  <Form.Item>
+                  <Form.Item className="form-actions">
                     <Button 
                       type="primary" 
-                      onClick={handleAiRouteSubmit} 
-                      icon={<SendOutlined />}
-                      size="large"
-                      block
+                      size="large" 
+                      icon={<SendOutlined />} 
+                      onClick={handleAiRouteSubmit}
                     >
-                      生成路线规划
+                      生成路线
                     </Button>
                   </Form.Item>
                 </Form>
               ) : (
-                <div className="route-result">
+                <div className="result-container">
                   {aiRouteLoading ? (
                     <div className="loading-container">
                       <Spin size="large" />
-                      <Paragraph className="loading-text">
-                        AI正在为您规划最佳路线...
-                      </Paragraph>
+                      <div className="loading-text">AI正在为您规划最佳路线，请稍候...</div>
                     </div>
                   ) : aiRouteResult && (
                     <>
@@ -309,57 +374,67 @@ const RoutePlanning = () => {
                         <Paragraph>{aiRouteResult.description}</Paragraph>
                       </div>
                       
-                      {aiRouteResult.steps.map((day, index) => (
-                        <div key={index} className="day-plan">
-                          <Title level={3} className="day-title">第{day.day}天</Title>
-                          <Timeline>
-                            {day.places.map((place, placeIndex) => (
-                              <Timeline.Item 
-                                key={placeIndex} 
-                                dot={<EnvironmentOutlined style={{ fontSize: '16px' }} />}
-                              >
-                                <div className="timeline-content">
-                                  <div className="place-header">
-                                    <Text strong className="place-name">{place.name}</Text>
-                                    <Tag color="blue">{place.duration}</Tag>
-                                  </div>
-                                  <Paragraph className="place-description">
-                                    {place.description}
-                                  </Paragraph>
-                                  <div className="ar-features">
-                                    <Text type="secondary">AR特色：</Text>
-                                    {place.arFeatures.map((feature, i) => (
-                                      <Tag key={i} color="cyan">{feature}</Tag>
-                                    ))}
-                                  </div>
-                                </div>
-                              </Timeline.Item>
-                            ))}
-                          </Timeline>
-                        </div>
-                      ))}
+                      <Divider orientation="left">行程安排</Divider>
                       
-                      <div className="route-tips">
-                        <Title level={4}>行程贴士</Title>
-                        <List
-                          size="small"
-                          bordered
-                          dataSource={aiRouteResult.tips}
-                          renderItem={(item) => (
-                            <List.Item>
-                              <BulbOutlined style={{ marginRight: '8px', color: '#faad14' }} />
-                              {item}
-                            </List.Item>
-                          )}
-                        />
-                      </div>
+                      <Steps 
+                        direction="vertical" 
+                        current={-1} 
+                        className="route-steps"
+                      >
+                        {aiRouteResult.steps.map((step, index) => (
+                          <Step 
+                            key={index}
+                            title={`第${step.day}天`}
+                            description={
+                              <div className="day-plan">
+                                <List
+                                  itemLayout="horizontal"
+                                  dataSource={step.places}
+                                  renderItem={place => (
+                                    <List.Item className="place-item">
+                                      <div className="place-content">
+                                        <div className="place-name">{place.name}</div>
+                                        <div className="place-duration">
+                                          <ClockCircleOutlined /> {place.duration}
+                                        </div>
+                                        <div className="place-description">{place.description}</div>
+                                        <div className="place-features">
+                                          <Text type="secondary">AR功能：</Text>
+                                          {place.arFeatures.map((feature, idx) => (
+                                            <Tag key={idx} color="blue">{feature}</Tag>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </List.Item>
+                                  )}
+                                />
+                              </div>
+                            }
+                          />
+                        ))}
+                      </Steps>
+                      
+                      <Divider orientation="left">旅行贴士</Divider>
+                      
+                      <ul className="travel-tips">
+                        {aiRouteResult.tips.map((tip, index) => (
+                          <li key={index}>{tip}</li>
+                        ))}
+                      </ul>
                       
                       <div className="result-actions">
-                        <Button onClick={previewRoute} icon={<PictureOutlined />} type="primary">
-                          AR路线预览
+                        <Button 
+                          type="primary" 
+                          icon={<StarOutlined />}
+                          onClick={saveRoute}
+                        >
+                          保存路线
                         </Button>
-                        <Button onClick={saveRoute} icon={<HeartOutlined />}>
-                          保存到我的行程
+                        <Button 
+                          icon={<PictureOutlined />}
+                          onClick={previewRoute}
+                        >
+                          AR预览
                         </Button>
                       </div>
                     </>
@@ -370,50 +445,61 @@ const RoutePlanning = () => {
           </Col>
           
           <Col xs={24} md={8}>
-            <Card title="路线模板" className="template-card">
-              <List
-                itemLayout="horizontal"
-                dataSource={routeTemplates}
-                renderItem={item => (
-                  <List.Item
-                    className="template-item"
-                    onClick={() => {
-                      routeForm.setFieldsValue({ template: item.id });
-                      message.info(`已选择${item.name}模板`);
-                    }}
-                  >
-                    <List.Item.Meta
-                      avatar={<div className="template-icon">{item.icon}</div>}
-                      title={item.name}
-                      description={item.description}
-                    />
-                  </List.Item>
-                )}
-              />
+            <Card 
+              title="我的保存路线" 
+              className="sidebar-card"
+              extra={<a href="#!">查看全部</a>}
+            >
+              {savedRoutes.length > 0 ? (
+                <List
+                  itemLayout="horizontal"
+                  dataSource={savedRoutes}
+                  renderItem={item => (
+                    <List.Item>
+                      <List.Item.Meta
+                        avatar={<div className="route-days">{item.days}天</div>}
+                        title={item.title}
+                        description={
+                          <>
+                            <div>{item.description}</div>
+                            <div className="saved-date">创建于 {item.created}</div>
+                          </>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <div className="empty-content">
+                  <p>暂无保存的路线</p>
+                </div>
+              )}
             </Card>
             
-            <Card title="我的保存路线" className="saved-routes-card">
+            <Card 
+              title="热门景点推荐" 
+              className="sidebar-card"
+              style={{ marginTop: 24 }}
+            >
               <List
-                itemLayout="vertical"
-                dataSource={savedRoutes}
+                itemLayout="horizontal"
+                dataSource={[
+                  { name: '故宫博物院', rating: 4.9, visitors: '年游客量1600万' },
+                  { name: '颐和园', rating: 4.8, visitors: '年游客量1000万' },
+                  { name: '长城', rating: 4.9, visitors: '年游客量900万' }
+                ]}
                 renderItem={item => (
-                  <List.Item
-                    className="saved-route-item"
-                  >
-                    <div className="saved-route-header">
-                      <Text strong>{item.title}</Text>
-                      <Tag color="green">{item.days}天</Tag>
-                    </div>
-                    <div className="saved-route-time">
-                      <ClockCircleOutlined /> 创建于：{item.created}
-                    </div>
-                    <Paragraph className="saved-route-desc" ellipsis={{ rows: 2 }}>
-                      {item.description}
-                    </Paragraph>
-                    <div className="saved-route-actions">
-                      <Button type="link" size="small">查看</Button>
-                      <Button type="link" size="small">编辑</Button>
-                    </div>
+                  <List.Item>
+                    <List.Item.Meta
+                      title={item.name}
+                      description={
+                        <>
+                          <Rate disabled defaultValue={Math.round(item.rating)} />
+                          <span className="rating-score">{item.rating}</span>
+                          <div>{item.visitors}</div>
+                        </>
+                      }
+                    />
                   </List.Item>
                 )}
               />
