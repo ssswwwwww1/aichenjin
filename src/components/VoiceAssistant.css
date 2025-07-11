@@ -1,0 +1,268 @@
+.va-float-button {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 1000;
+}
+
+.va-toggle-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #1890ff, #722ed1);
+  border: none;
+}
+
+.va-container {
+  position: fixed;
+  right: 30px;
+  bottom: 100px;
+  z-index: 999;
+  width: 380px;
+  max-width: calc(100vw - 60px);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.va-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.va-header {
+  display: flex;
+  align-items: center;
+  color: #1890ff;
+}
+
+.va-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  color: #1890ff;
+}
+
+.va-body {
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+}
+
+.va-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #f5f7fa;
+}
+
+.va-message {
+  display: flex;
+  max-width: 90%;
+}
+
+.va-message.user {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.va-message-avatar {
+  margin-top: 4px;
+}
+
+.va-message.user .va-message-avatar {
+  margin-left: 8px;
+}
+
+.va-message.assistant .va-message-avatar {
+  margin-right: 8px;
+}
+
+.assistant-avatar {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.user-avatar {
+  background-color: #722ed1;
+  color: #fff;
+}
+
+.va-message-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.va-message-bubble {
+  padding: 12px;
+  border-radius: 12px;
+  position: relative;
+  max-width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.va-message.assistant .va-message-bubble {
+  background-color: white;
+  border-top-left-radius: 0;
+}
+
+.va-message.user .va-message-bubble {
+  background-color: #e6f7ff;
+  border-top-right-radius: 0;
+}
+
+.va-message-bubble .ant-typography {
+  margin-bottom: 0;
+}
+
+.va-related-links {
+  margin-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 8px;
+}
+
+.va-related-links ul {
+  padding-left: 20px;
+  margin: 8px 0 0;
+}
+
+.va-related-links li {
+  margin-bottom: 4px;
+}
+
+.va-processing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 12px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 8px;
+}
+
+.va-controls {
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  background-color: white;
+}
+
+.va-input-container {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.va-text-input {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 20px;
+  margin-right: 8px;
+  font-size: 14px;
+  height: 40px;
+  transition: all 0.3s;
+}
+
+.va-text-input:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.va-text-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.va-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.va-action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.va-voice-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.va-voice-btn.listening {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+.va-voice-btn.listening::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(24, 144, 255, 0.1);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.va-help-tip {
+  margin-top: 16px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .va-container {
+    width: calc(100vw - 60px);
+  }
+  
+  .va-body {
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .va-float-button {
+    right: 20px;
+    bottom: 20px;
+  }
+  
+  .va-container {
+    right: 10px;
+    bottom: 90px;
+    width: calc(100vw - 20px);
+  }
+  
+  .va-action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+} 

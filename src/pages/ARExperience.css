@@ -1,0 +1,879 @@
+.ar-experience-page {
+  padding-bottom: 48px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e1e8f2 100%);
+  animation: gradientShift 15s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 页面标题区域 */
+.ar-hero {
+  background-color: #1a2a3a;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://via.placeholder.com/1200x300?text=AR体验');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 0;
+  margin-bottom: 40px;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ar-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(26, 42, 58, 0.2) 0%, rgba(26, 42, 58, 0.6) 100%);
+  z-index: 1;
+  animation: pulse 10s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.ar-hero-title {
+  color: white !important;
+  font-size: 36px !important;
+  margin-bottom: 16px !important;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  animation: fadeInDown 1s ease-out;
+}
+
+.ar-hero-desc {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  max-width: 700px;
+  margin: 0 auto !important;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 景点卡片样式 */
+.scenario-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+}
+
+.scenario-card:nth-child(1) { animation-delay: 0.1s; }
+.scenario-card:nth-child(2) { animation-delay: 0.2s; }
+.scenario-card:nth-child(3) { animation-delay: 0.3s; }
+.scenario-card:nth-child(4) { animation-delay: 0.4s; }
+.scenario-card:nth-child(5) { animation-delay: 0.5s; }
+.scenario-card:nth-child(6) { animation-delay: 0.6s; }
+
+.scenario-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-card .ant-card-cover {
+  overflow: hidden;
+}
+
+.scenario-card .ant-card-cover img {
+  transition: transform 0.8s ease;
+}
+
+.scenario-card:hover .ant-card-cover img {
+  transform: scale(1.1);
+}
+
+.scenario-location {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.45);
+  transition: color 0.3s ease;
+}
+
+.scenario-card:hover .scenario-location {
+  color: #1890ff;
+}
+
+.scenario-desc {
+  margin-bottom: 8px !important;
+  transition: color 0.3s ease;
+}
+
+.scenario-tags {
+  margin-bottom: 16px;
+}
+
+.scenario-tags .ant-tag {
+  transition: transform 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+}
+
+.scenario-tags .ant-tag:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.scenario-button {
+  margin-top: auto;
+  text-align: center;
+}
+
+.scenario-button .ant-btn {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.scenario-button .ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.scenario-button .ant-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  border-radius: 100%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.8s, opacity 0.8s;
+}
+
+.scenario-button .ant-btn:active::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* 使用指南样式 */
+.guide-section {
+  margin-top: 24px;
+}
+
+.guide-card {
+  text-align: center;
+  height: 100%;
+  padding: 24px 16px;
+  transition: all 0.4s ease;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+}
+
+.guide-card:nth-child(1) { animation-delay: 0.1s; }
+.guide-card:nth-child(2) { animation-delay: 0.3s; }
+.guide-card:nth-child(3) { animation-delay: 0.5s; }
+.guide-card:nth-child(4) { animation-delay: 0.7s; }
+
+.guide-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.guide-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #9D2933, #ff8177);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.guide-card:hover::before {
+  transform: scaleX(1);
+}
+
+.guide-icon {
+  font-size: 48px;
+  color: #9D2933;
+  margin-bottom: 16px;
+  transition: transform 0.5s ease;
+}
+
+.guide-card:hover .guide-icon {
+  transform: scale(1.2) rotate(10deg);
+}
+
+.guide-step {
+  font-weight: bold;
+  color: #9D2933;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.guide-title {
+  margin-bottom: 12px !important;
+  transition: color 0.3s ease;
+}
+
+.guide-card:hover .guide-title {
+  color: #9D2933;
+}
+
+.guide-content {
+  color: rgba(0, 0, 0, 0.65);
+  transition: color 0.3s ease;
+}
+
+.guide-download {
+  text-align: center;
+  margin-top: 48px;
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards 1s;
+}
+
+.qr-codes {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.qr-item {
+  margin: 0 24px;
+  transition: all 0.3s ease;
+}
+
+.qr-item:hover {
+  transform: translateY(-8px) scale(1.05);
+}
+
+.qr-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.qr-item:hover .qr-image {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.qr-title {
+  margin-top: 8px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.qr-item:hover .qr-title {
+  color: #9D2933;
+}
+
+/* 技术介绍样式 */
+.tech-section {
+  margin-top: 24px;
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+.tech-feature-card {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tech-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.tech-feature-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.tech-feature-list li {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.75);
+  transition: transform 0.3s ease, color 0.3s ease;
+  padding: 3px 0;
+}
+
+.tech-feature-list li:hover {
+  transform: translateX(5px);
+  color: #1890ff;
+}
+
+/* 模态框样式 */
+.scenario-detail-location {
+  margin-bottom: 12px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.feature-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.feature-list li {
+  margin-bottom: 8px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.feature-list li:hover {
+  transform: translateX(5px);
+  color: #1890ff;
+}
+
+.scenario-qrcode {
+  margin-top: 24px;
+  animation: fadeIn 0.5s ease;
+}
+
+.qrcode-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.qrcode-icon {
+  font-size: 32px;
+  margin-right: 16px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.qrcode-image {
+  width: 200px;
+  height: 200px;
+  transition: transform 0.5s ease;
+}
+
+.qrcode-image:hover {
+  transform: scale(1.1);
+}
+
+.qrcode-tip {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ar-hero {
+    padding: 48px 0;
+  }
+  
+  .ar-hero-title {
+    font-size: 28px !important;
+  }
+  
+  .qr-codes {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .qr-item {
+    margin: 16px 0;
+  }
+} 
+
+/* 路线部分 */
+.routes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.ai-route-button {
+  margin-left: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+}
+
+.ai-route-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.route-card {
+  overflow: hidden;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+}
+
+.route-card:nth-child(1) { animation-delay: 0.1s; }
+.route-card:nth-child(2) { animation-delay: 0.3s; }
+.route-card:nth-child(3) { animation-delay: 0.5s; }
+.route-card:nth-child(4) { animation-delay: 0.7s; }
+
+.route-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+}
+
+.route-card-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.route-image {
+  flex: 0 0 200px;
+  height: 200px;
+  overflow: hidden;
+  margin-right: 16px;
+}
+
+.route-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.route-card:hover .route-image img {
+  transform: scale(1.1);
+}
+
+.route-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.route-meta {
+  display: flex;
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.route-meta span {
+  margin-right: 16px;
+  transition: color 0.3s ease;
+}
+
+.route-card:hover .route-meta span {
+  color: #1890ff;
+}
+
+.route-rating {
+  margin-bottom: 8px;
+}
+
+.rating-score {
+  font-size: 18px;
+  font-weight: bold;
+  color: #faad14;
+  transition: transform 0.3s ease;
+}
+
+.route-card:hover .rating-score {
+  transform: scale(1.1);
+}
+
+.rating-count {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.route-description {
+  margin-bottom: 12px !important;
+  transition: color 0.3s ease;
+}
+
+.preview-button {
+  margin-top: auto;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.preview-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  border-radius: 100%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.8s, opacity 0.8s;
+}
+
+.preview-button:active::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+.route-templates {
+  margin-top: 40px;
+  opacity: 0;
+  animation: fadeIn 1s forwards 0.5s;
+}
+
+.template-card {
+  text-align: center;
+  height: 100%;
+  transition: all 0.4s ease;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.template-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #1890ff, #69c0ff);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.template-card:hover::before {
+  transform: scaleX(1);
+}
+
+.template-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+  transition: transform 0.5s ease;
+}
+
+.template-card:hover .template-icon {
+  transform: scale(1.2) rotate(15deg);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.form-actions .ant-btn {
+  margin-left: 12px;
+  transition: all 0.3s ease;
+}
+
+.form-actions .ant-btn:hover {
+  transform: translateY(-3px);
+}
+
+.ai-route-result {
+  animation: fadeIn 0.5s ease;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.result-header .ant-btn {
+  transition: all 0.3s ease;
+}
+
+.result-header .ant-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.day-plan {
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeInRight 0.8s forwards;
+}
+
+.day-plan:nth-child(2) { animation-delay: 0.2s; }
+.day-plan:nth-child(3) { animation-delay: 0.4s; }
+.day-plan:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-content {
+  padding: 8px 0;
+}
+
+.step-time {
+  font-weight: bold;
+  color: #1890ff;
+  margin-bottom: 4px;
+}
+
+.step-desc {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.step-features .ant-tag {
+  transition: all 0.3s ease;
+  margin-bottom: 4px;
+}
+
+.step-features .ant-tag:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.route-tips {
+  margin-top: 32px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  animation: fadeIn 1s forwards 0.8s;
+  opacity: 0;
+}
+
+.route-tips ul {
+  padding-left: 20px;
+}
+
+.route-tips li {
+  margin-bottom: 8px;
+  transition: transform 0.3s ease;
+}
+
+.route-tips li:hover {
+  transform: translateX(5px);
+}
+
+.result-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.result-actions .ant-btn {
+  margin-left: 12px;
+  transition: all 0.3s ease;
+}
+
+.result-actions .ant-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* 场景详情 */
+.scenario-detail {
+  animation: fadeIn 0.5s ease;
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 8px;
+  transition: transform 0.5s ease;
+}
+
+.detail-image:hover {
+  transform: scale(1.03);
+}
+
+.detail-qrcode {
+  margin-top: 16px;
+  text-align: center;
+  animation: fadeIn 0.5s ease 0.3s both;
+}
+
+.detail-qrcode img {
+  width: 200px;
+  height: 200px;
+  margin-top: 8px;
+  transition: transform 0.3s ease;
+}
+
+.detail-qrcode img:hover {
+  transform: scale(1.1);
+}
+
+.detail-location {
+  margin: 12px 0;
+  font-size: 16px;
+}
+
+.detail-features ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.detail-features li {
+  margin-bottom: 8px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  padding: 3px 0;
+}
+
+.detail-features li:hover {
+  transform: translateX(5px);
+  color: #1890ff;
+}
+
+/* 标签页动画 */
+.ant-tabs-tab {
+  transition: all 0.3s ease;
+}
+
+.ant-tabs-tab:hover {
+  transform: translateY(-2px);
+}
+
+.ant-tabs-tab-btn {
+  transition: color 0.3s;
+}
+
+.ant-tabs-ink-bar {
+  transition: width 0.3s ease, left 0.3s ease !important;
+}
+
+@media (max-width: 768px) {
+  .route-card-content {
+    flex-direction: column;
+  }
+  
+  .route-image {
+    flex: none;
+    height: 150px;
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+} 
+
+/* 添加场景卡片操作按钮样式 */
+.scenario-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.scenario-card:hover .scenario-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scenario-actions .ant-btn {
+  transition: all 0.3s ease;
+}
+
+.scenario-actions .ant-btn:hover {
+  transform: scale(1.15);
+}
+
+/* 路线操作按钮样式 */
+.route-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.route-actions .ant-btn {
+  transition: all 0.3s ease;
+}
+
+.route-actions .ant-btn:hover {
+  transform: scale(1.05);
+}
+
+/* 显示动画控制 */
+.animate-section .scenario-card,
+.animate-section .guide-card,
+.animate-section .route-card,
+.animate-section .template-card,
+.animate-section .tech-feature-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.animate-section.visible .scenario-card,
+.animate-section.visible .guide-card,
+.animate-section.visible .route-card,
+.animate-section.visible .template-card,
+.animate-section.visible .tech-feature-card {
+  opacity: 1;
+  transform: translateY(0);
+} 

@@ -1,0 +1,501 @@
+/* 个人中心页面样式 */
+.personal-center-page {
+  min-height: calc(100vh - 64px - 80px);
+  padding: 40px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 登录提示区域 */
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  margin: 40px auto;
+  max-width: 500px;
+}
+
+.login-prompt h3 {
+  margin: 24px 0 12px !important;
+}
+
+.login-prompt .ant-typography {
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 32px !important;
+}
+
+.login-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #1890ff, #722ed1);
+  border: none;
+  transition: all 0.3s;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.register-button {
+  border-color: #1890ff;
+  color: #1890ff;
+  transition: all 0.3s;
+}
+
+.register-button:hover {
+  border-color: #722ed1;
+  color: #722ed1;
+  transform: translateY(-2px);
+}
+
+/* 用户资料区域 */
+.user-profile-section {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1), rgba(114, 46, 209, 0.1));
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.user-avatar-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.user-avatar-container .ant-avatar {
+  border: 4px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-level-badge {
+  position: absolute;
+  bottom: 0;
+  right: calc(50% - 60px);
+  background: linear-gradient(135deg, #ff4d4f, #ff7a45);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.4);
+}
+
+.user-info-container {
+  padding: 0 16px;
+}
+
+.user-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.user-name {
+  margin: 0 !important;
+}
+
+.user-bio {
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 16px !important;
+}
+
+.user-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.user-stat-item {
+  flex: 1;
+  min-width: 120px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 4px;
+}
+
+.exp-progress {
+  margin-top: 4px;
+}
+
+.user-interests {
+  margin-top: 16px;
+}
+
+.interests-label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-right: 8px;
+}
+
+.interest-tag {
+  margin: 0 6px 6px 0;
+  transition: all 0.3s;
+}
+
+.interest-tag:hover {
+  transform: translateY(-2px);
+}
+
+/* 统计数据 */
+.user-data-section {
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  height: 100%;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 标签页内容 */
+.user-tabs {
+  margin-bottom: 40px;
+}
+
+.user-tabs .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+.user-tabs .ant-tabs-tab {
+  padding: 12px 16px;
+  transition: all 0.3s;
+}
+
+.user-tabs .ant-tabs-tab:hover {
+  transform: translateY(-2px);
+}
+
+.tab-content-container {
+  padding-bottom: 24px;
+}
+
+/* 学习记录 */
+.history-list {
+  margin-bottom: 24px;
+}
+
+.history-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s;
+}
+
+.history-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+}
+
+.history-cover {
+  width: 120px;
+  height: 80px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.history-content {
+  flex: 1;
+}
+
+.history-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.history-progress {
+  margin-bottom: 8px;
+}
+
+.history-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.history-continue-btn {
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+/* 学习计划 */
+.plan-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.plan-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.plan-meta {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.plan-progress {
+  margin-bottom: 16px;
+}
+
+.plan-next {
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.plan-next > div {
+  margin-bottom: 4px;
+}
+
+.plan-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* 收藏内容 */
+.favorite-card {
+  height: 100%;
+  transition: all 0.3s;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.favorite-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.favorite-cover {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.5s;
+}
+
+.favorite-card:hover .favorite-cover {
+  transform: scale(1.05);
+}
+
+.favorite-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.favorite-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* 评论内容 */
+.comments-list {
+  margin-bottom: 24px;
+}
+
+.comment-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #1890ff;
+}
+
+.comment-target {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 8px;
+}
+
+.comment-content {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 1.6;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  text-align: right;
+}
+
+/* 成就 */
+.achievement-card {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+  height: 100%;
+  transition: all 0.3s;
+  border-radius: 8px;
+}
+
+.achievement-card.achieved {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.3));
+  border-color: #ffd700;
+}
+
+.achievement-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-icon {
+  font-size: 32px;
+  color: #ffd700;
+  margin-bottom: 16px;
+}
+
+.achievement-card.achieved .achievement-icon {
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.8; }
+}
+
+.achievement-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.achievement-description {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 16px;
+}
+
+.achievement-progress {
+  margin-top: 16px;
+}
+
+/* 消息通知 */
+.notification-list {
+  margin-bottom: 24px;
+}
+
+.notification-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.notification-card.unread {
+  background-color: rgba(24, 144, 255, 0.05);
+  border-left: 4px solid #1890ff;
+}
+
+.notification-title {
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.notification-title .ant-badge {
+  margin-right: 8px;
+}
+
+.notification-text {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.notification-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  text-align: right;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .user-profile-section {
+    padding: 20px;
+  }
+  
+  .profile-left {
+    margin-bottom: 16px;
+  }
+  
+  .user-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .history-item,
+  .favorite-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .history-cover,
+  .favorite-cover {
+    width: 100%;
+    margin-bottom: 12px;
+    margin-right: 0;
+  }
+  
+  .history-continue-btn {
+    margin-left: 0;
+    margin-top: 12px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .login-buttons .ant-btn {
+    width: 100%;
+  }
+} 

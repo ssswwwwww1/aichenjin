@@ -1,0 +1,19 @@
+.not-found-page {
+  padding: 80px 0;
+  text-align: center;
+}
+
+.not-found-page .ant-result-title {
+  font-size: 72px;
+  color: #9D2933;
+}
+
+.not-found-page .ant-result-subtitle {
+  font-size: 20px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.not-found-page .ant-result-icon {
+  margin-bottom: 24px;
+} 

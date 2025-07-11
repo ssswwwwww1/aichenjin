@@ -1,0 +1,68 @@
+{
+  "name": "capital-culture-tourism",
+  "version": "1.0.0",
+  "description": "AI赋能于传统文化传承网站",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "server": "nodemon server/index.js",
+    "dev": "concurrently \"npm run start\" \"npm run server\"",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "node deploy.js",
+    "serve": "node server/index.js"
+  },
+  "dependencies": {
+    "@ant-design/compatible": "^5.1.4",
+    "@tensorflow/tfjs": "^4.20.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "aframe": "^1.5.0",
+    "aframe-ar": "^0.2.1-a",
+    "antd": "^5.15.0",
+    "ar.js": "^2.2.2",
+    "axios": "^1.6.7",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "framer-motion": "^12.23.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.0",
+    "qrcode.react": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-qr-code": "^2.0.12",
+    "react-router-dom": "^6.22.1",
+    "react-scripts": "5.0.1",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "three": "^0.161.0",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

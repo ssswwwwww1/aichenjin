@@ -1,0 +1,257 @@
+/* 社区页面样式 */
+.community-page {
+  width: 100%;
+}
+
+/* 头部区域 */
+.community-hero {
+  background: linear-gradient(135deg, #8a2387, #e94057, #f27121);
+  padding: 80px 0 40px;
+  margin-bottom: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.community-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: url('../assets/images/community-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.community-hero-title {
+  color: white !important;
+  margin-bottom: 16px !important;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-size: 2.5rem !important;
+}
+
+.community-hero-desc {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 1.2rem !important;
+  max-width: 600px;
+  margin: 0 auto !important;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 内容区域 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 发布器样式 */
+.post-editor {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+}
+
+.post-editor .ant-card-body {
+  padding: 20px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-tools {
+  display: flex;
+  gap: 8px;
+}
+
+/* 帖子样式 */
+.post-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.post-info {
+  margin-left: 12px;
+}
+
+.post-author {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.post-time {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.post-title {
+  margin-bottom: 12px !important;
+}
+
+.post-content {
+  margin-bottom: 16px !important;
+}
+
+.post-images {
+  margin-bottom: 16px;
+}
+
+.post-image {
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.post-tags {
+  margin-bottom: 16px;
+}
+
+.post-actions-bar {
+  display: flex;
+  gap: 16px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+}
+
+.action-btn .anticon {
+  margin-right: 4px;
+}
+
+/* 评论区样式 */
+.comments-section {
+  margin-top: 8px;
+}
+
+.comment-input {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.comment-input .ant-form-item {
+  flex: 1;
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+
+/* 侧边栏卡片样式 */
+.sidebar-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.more-link {
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* 活动卡片样式 */
+.event-card {
+  margin-bottom: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.event-card .ant-card-cover img {
+  height: 150px;
+  object-fit: cover;
+}
+
+.event-btn {
+  margin-top: 12px;
+}
+
+.group-desc {
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 0 !important;
+}
+
+/* 标签页样式 */
+.community-tabs {
+  margin-top: 16px;
+}
+
+.community-tabs .ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .community-hero {
+    padding: 48px 0 32px;
+  }
+  
+  .community-hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .community-hero-desc {
+    font-size: 1rem !important;
+  }
+  
+  .post-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .post-tools {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .post-actions > button {
+    width: 100%;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-item {
+  animation: fadeIn 0.5s ease-out forwards;
+} 
