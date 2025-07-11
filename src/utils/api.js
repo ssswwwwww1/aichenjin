@@ -89,4 +89,41 @@ export const createBooking = (data) => api.post('/booking/create', data);
 export const getBookingById = (id) => api.get(`/booking/${id}`);
 export const cancelBooking = (id) => api.post(`/booking/${id}/cancel`);
 
+// DeepSeek AI API调用
+export const askDeepSeekAI = async (question) => {
+  try {
+    const API_KEY = 'sk-3f62c6c793274de9a166b59f085282d0';
+    const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+    
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专注于中国传统文化和非物质文化遗产的AI助手，特别精通北京地区的文化遗产。你的回答应该准确、详细且富有文化底蕴。'
+          },
+          {
+            role: 'user',
+            content: question
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 800
+      })
+    });
+
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('DeepSeek API调用失败:', error);
+    return '抱歉，我暂时无法回答这个问题，请稍后再试。';
+  }
+};
+
 export default api; 

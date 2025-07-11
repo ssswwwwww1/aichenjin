@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { Typography, Row, Col, Card, Button, Tabs, Form, Select, Slider, Radio, Input, Avatar, Divider, message, List, Tag } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Typography, Row, Col, Card, Button, Tabs, Form, Select, Slider, Radio, Input, Avatar, Divider, message, List } from 'antd';
 import { 
-  RobotOutlined,
   SoundOutlined,
   QuestionCircleOutlined,
   SendOutlined,
@@ -9,8 +8,10 @@ import {
   HistoryOutlined,
   UserOutlined,
   StarOutlined,
-  ApiOutlined
+  ApiOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
+import { askDeepSeekAI } from '../utils/api';
 import './CulturalLearning.css';
 
 const { Title, Paragraph, Text } = Typography;
@@ -27,6 +28,7 @@ const CulturalLearning = () => {
     { role: 'ai', content: '你好！我是非遗文化智能助手，请问有什么可以帮助你的？', time: '14:30' }
   ]);
   const [isRecording, setIsRecording] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messageEndRef = useRef(null);
 
   // 非遗文化主题
@@ -66,7 +68,7 @@ const CulturalLearning = () => {
   ];
 
   // 处理发送消息
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
     const newUserMessage = {
@@ -77,20 +79,11 @@ const CulturalLearning = () => {
     
     setChatHistory([...chatHistory, newUserMessage]);
     setInputMessage('');
+    setIsLoading(true);
     
-    // 模拟AI回复
-    setTimeout(() => {
-      let aiResponse = '';
-      
-      if (inputMessage.includes('京剧')) {
-        aiResponse = '京剧是中国国粹，四大行当是生、旦、净、丑。生为男性角色，旦为女性角色，净为脸谱化的角色，丑为喜剧角色。京剧起源于清朝乾隆年间，至今已有200多年历史。';
-      } else if (inputMessage.includes('景泰蓝')) {
-        aiResponse = '景泰蓝是北京特有的传统工艺品，又称"铜胎掐丝珐琅"。制作步骤包括制胎、掐丝、烧焊、施彩、烧制和打磨抛光。景泰蓝因明代景泰年间兴盛而得名，是北京非常重要的非物质文化遗产。';
-      } else if (inputMessage.includes('风筝')) {
-        aiResponse = '北京风筝源于宫廷，历史悠久，造型多样，色彩艳丽。北京风筝的代表人物是韩凤鸣、魏元泰和哈氏三兄弟，他们的作品被称为"北京三派"。北京风筝的特点是扎制精良，绘画精美，整体轻巧灵活。';
-      } else {
-        aiResponse = '这是个很有趣的问题。非物质文化遗产是指各族人民世代相传的、与群众生活密切相关的各种传统文化表现形式和文化空间。北京有很多珍贵的非遗项目，包括京剧、景泰蓝、风筝等。您想了解更具体的内容吗？';
-      }
+    try {
+      // 调用DeepSeek AI API
+      const aiResponse = await askDeepSeekAI(inputMessage);
       
       const newAiMessage = {
         role: 'ai',
@@ -99,8 +92,19 @@ const CulturalLearning = () => {
       };
       
       setChatHistory(prevChat => [...prevChat, newAiMessage]);
-      scrollToBottom();
-    }, 1000);
+    } catch (error) {
+      console.error('AI回答失败:', error);
+      
+      const errorMessage = {
+        role: 'ai',
+        content: '抱歉，我暂时无法回答这个问题，请稍后再试。',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      setChatHistory(prevChat => [...prevChat, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 处理语音输入
@@ -128,6 +132,22 @@ const CulturalLearning = () => {
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // 当聊天历史更新时，自动滚动到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
+
+  // 新增的Checkbox组件，因为原代码中没有import
+  const Checkbox = ({ children, value, ...props }) => {
+    return (
+      <Radio {...props} value={value}>
+        {children}
+      </Radio>
+    );
+  };
+
+  Checkbox.Group = Radio.Group;
 
   return (
     <div className="cultural-learning-page">
@@ -290,6 +310,16 @@ const CulturalLearning = () => {
                         )}
                         </div>
                     ))}
+                    {isLoading && (
+                      <div className="message-item ai-message">
+                        <Avatar src={aiAvatar} size={40} className="message-avatar" />
+                        <div className="message-content">
+                          <div className="message-bubble loading-bubble">
+                            <LoadingOutlined /> AI正在思考中...
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div ref={messageEndRef} />
                         </div>
                   <Divider />
@@ -300,6 +330,7 @@ const CulturalLearning = () => {
                       onPressEnter={handleSendMessage}
                       placeholder="请输入您想了解的非遗文化问题..."
                       prefix={<QuestionCircleOutlined />}
+                      disabled={isLoading}
                       suffix={
                         <Button 
                           type={isRecording ? "primary" : "default"}
@@ -307,15 +338,17 @@ const CulturalLearning = () => {
                           onClick={handleVoiceInput}
                           shape="circle"
                           size="small"
+                          disabled={isLoading}
                         />
                       }
                     />
                     <Button 
                       type="primary" 
-                      icon={<SendOutlined />} 
+                      icon={isLoading ? <LoadingOutlined /> : <SendOutlined />} 
                       onClick={handleSendMessage}
+                      disabled={isLoading || !inputMessage.trim()}
                     >
-                      发送
+                      {isLoading ? '发送中...' : '发送'}
                     </Button>
                   </div>
                 </Card>
@@ -355,16 +388,5 @@ const CulturalLearning = () => {
     </div>
   );
 };
-
-// 新增的Checkbox组件，因为原代码中没有import
-const Checkbox = ({ children, value, ...props }) => {
-  return (
-    <Radio {...props} value={value}>
-      {children}
-    </Radio>
-  );
-};
-
-Checkbox.Group = Radio.Group;
 
 export default CulturalLearning; 
