@@ -239,6 +239,13 @@ const CulturalLearning = () => {
                       <Button type="primary" icon={<SoundOutlined />} block>
                         试听音色
                       </Button>
+                      <Button 
+                        type="link" 
+                        onClick={() => window.location.href = '/route-planning'}
+                        style={{ marginTop: '10px' }}
+                      >
+                        前往AI路线规划
+                      </Button>
                     </Form.Item>
                   </Form>
                 </Card>

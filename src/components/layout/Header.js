@@ -14,9 +14,10 @@ import {
   MessageOutlined,
   GlobalOutlined,
   CalendarOutlined,
-  CommentOutlined
+  CommentOutlined,
+  VideoCameraOutlined
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, getUnreadNotificationCount } from '../../utils/api';
 import './Header.css';
@@ -34,6 +35,7 @@ const Header = ({ onChangeTheme, currentTheme }) => {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationDrawerVisible, setNotificationDrawerVisible] = useState(false);
   const [language, setLanguage] = useState('zh-CN');
+  const navigate = useNavigate();
 
   // 主题选项
   const themes = [
@@ -327,16 +329,26 @@ const Header = ({ onChangeTheme, currentTheme }) => {
   return (
     <AntHeader className="main-header">
       <div className="header-content">
-          <div className="logo">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/">
-              <h1>首都文旅</h1>
-            </Link>
-          </motion.div>
+        <div className="logo-container">
+          <Link to="/" className="logo-link">
+            <motion.img 
+              src="/images/retouch_2025070917094884.png" 
+              alt="爱沉浸" 
+              className="logo-image"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ rotate: 15, scale: 1.1 }}
+            />
+            <motion.h1 
+              className="logo-text"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              爱沉浸
+            </motion.h1>
+          </Link>
         </div>
         <div className="nav-section">
           <Menu
@@ -360,9 +372,10 @@ const Header = ({ onChangeTheme, currentTheme }) => {
             <Menu.Item key="/route-planning" icon={<CompassOutlined />}>
               <Link to="/route-planning">路线规划</Link>
             </Menu.Item>
-            <Menu.Item key="/personal-center" icon={<UserOutlined />}>
-              <Link to="/personal-center">个人中心</Link>
+            <Menu.Item key="/ai-video-edit" icon={<VideoCameraOutlined />}>
+              <Link to="/ai-video-edit">AI剪辑视频</Link>
             </Menu.Item>
+            {/* 移除个人中心菜单项 */}
           </Menu>
           
           <div className="header-actions">
@@ -376,7 +389,6 @@ const Header = ({ onChangeTheme, currentTheme }) => {
                 <Button type="text" icon={<GlobalOutlined />} className="action-button" />
               </Tooltip>
             </Dropdown>
-            
             {/* 主题切换 */}
             <Dropdown 
               menu={{ items: themeMenuItems }} 
@@ -393,7 +405,6 @@ const Header = ({ onChangeTheme, currentTheme }) => {
                 />
               </Tooltip>
             </Dropdown>
-            
             {/* 通知中心 */}
             {isLoggedIn && (
               <Tooltip title="消息通知">
@@ -407,18 +418,13 @@ const Header = ({ onChangeTheme, currentTheme }) => {
                 </Badge>
               </Tooltip>
             )}
-            
-            {/* 用户菜单 */}
+            {/* 用户头像入口 */}
             {isLoggedIn ? (
-              <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
-        <div className="user-avatar">
-                  <motion.div whileHover={{ scale: 1.1 }}>
-          <Avatar icon={<UserOutlined />} />
-                  </motion.div>
-                </div>
-              </Dropdown>
+              <div className="user-avatar" style={{ marginLeft: 16, cursor: 'pointer' }} onClick={() => navigate('/personal-center')}>
+                <Avatar icon={<UserOutlined />} size={40} style={{ background: '#3F51B5' }} />
+              </div>
             ) : (
-              <Button type="primary" onClick={showLoginModal}>
+              <Button type="primary" onClick={showLoginModal} style={{ marginLeft: 16 }}>
                 登录 / 注册
               </Button>
             )}

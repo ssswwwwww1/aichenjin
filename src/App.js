@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Layout, ConfigProvider, theme } from 'antd';
 import { AnimatePresence } from 'framer-motion';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import Home from './pages/Home';
-import ARExperience from './pages/ARExperience';
-import CulturalLearning from './pages/CulturalLearning';
-import Community from './pages/Community';
-import PersonalCenter from './pages/PersonalCenter';
-import RoutePlanning from './pages/RoutePlanning';
-import NotFound from './pages/NotFound';
 import './App.css';
 import { StagewiseToolbar } from '@stagewise/toolbar-react';
 import ReactPlugin from '@stagewise-plugins/react';
 
 const { Content } = Layout;
+
+// 懒加载页面组件
+const Home = lazy(() => import('./pages/Home'));
+const ARExperience = lazy(() => import('./pages/ARExperience'));
+const CulturalLearning = lazy(() => import('./pages/CulturalLearning'));
+const Community = lazy(() => import('./pages/Community'));
+const PersonalCenter = lazy(() => import('./pages/PersonalCenter'));
+const RoutePlanning = lazy(() => import('./pages/RoutePlanning'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const AIVideoEdit = lazy(() => import('./pages/AIVideoEdit'));
 
 // 自定义主题配置
 const getThemeConfig = (isDarkMode) => ({
@@ -47,15 +50,18 @@ const AnimatedRoutes = () => {
   
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/ar-experience" element={<ARExperience />} />
-        <Route path="/cultural-learning" element={<CulturalLearning />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/route-planning" element={<RoutePlanning />} />
-        <Route path="/personal-center" element={<PersonalCenter />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<div style={{textAlign:'center',marginTop:80}}>页面加载中...</div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/ar-experience" element={<ARExperience />} />
+          <Route path="/cultural-learning" element={<CulturalLearning />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/route-planning" element={<RoutePlanning />} />
+          <Route path="/ai-video-edit" element={<AIVideoEdit />} />
+          <Route path="/personal-center" element={<PersonalCenter />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 };

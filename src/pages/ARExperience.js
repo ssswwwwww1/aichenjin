@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Typography, Row, Col, Card, Tabs, Button, List, Tag, Modal, Select, Form, Input, Checkbox, Steps, message, Spin, notification } from 'antd';
+import { Typography, Row, Col, Card, Tabs, Button, List, Tag, Modal, message, notification } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CompassOutlined, 
@@ -8,15 +8,10 @@ import {
   MobileOutlined,
   ScanOutlined,
   QrcodeOutlined,
-  RobotOutlined,
   ClockCircleOutlined,
   TeamOutlined,
   HeartOutlined,
-  BulbOutlined,
-  MessageOutlined,
   HistoryOutlined,
-  UserOutlined,
-  LikeOutlined,
   ShareAltOutlined,
   StarOutlined,
   ArrowRightOutlined,
@@ -27,9 +22,6 @@ import './ARExperience.css';
 const { Title, Paragraph } = Typography;
 const { TabPane } = Tabs;
 const { Meta } = Card;
-const { Option } = Select;
-const { TextArea } = Input;
-const { Step } = Steps;
 
 // Animation variants
 const containerVariants = {
@@ -91,10 +83,7 @@ const ARExperience = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScenario, setCurrentScenario] = useState(null);
   const [activeTab, setActiveTab] = useState('1');
-  const [aiRouteModalVisible, setAiRouteModalVisible] = useState(false);
-  const [aiRouteLoading, setAiRouteLoading] = useState(false);
-  const [aiRouteResult, setAiRouteResult] = useState(null);
-  const [routeForm] = Form.useForm();
+  // Route planning functionality moved to dedicated page
   const [visibleSections, setVisibleSections] = useState({});
   const [likedItems, setLikedItems] = useState({});
   
@@ -346,86 +335,7 @@ const ARExperience = () => {
     setModalVisible(false);
   };
 
-  const showAiRouteModal = () => {
-    setAiRouteModalVisible(true);
-  };
-
-  const handleAiRouteCancel = () => {
-    setAiRouteModalVisible(false);
-    setAiRouteResult(null);
-  };
-
-  const handleAiRouteSubmit = () => {
-    routeForm.validateFields().then(values => {
-      setAiRouteLoading(true);
-      console.log('路线定制需求:', values);
-      
-      // 模拟AI处理时间
-      setTimeout(() => {
-        const mockResult = {
-          title: `${values.days}天${values.interests.includes('history') ? '历史文化' : '休闲'}路线`,
-          description: `为${values.travelers}位游客量身定制，特别关注${values.interests.join('、')}兴趣方向`,
-          steps: [
-            {
-              day: 1,
-              places: [
-                { 
-                  name: '故宫博物院', 
-                  duration: '3小时',
-                  description: '参观紫禁城，了解明清历史',
-                  arFeatures: ['皇宫3D复原', '虚拟角色互动']
-                },
-                { 
-                  name: '景山公园', 
-                  duration: '1小时',
-                  description: '俯瞰紫禁城全景',
-                  arFeatures: ['全景导览', '历史变迁展示']
-                },
-                { 
-                  name: '什刹海', 
-                  duration: '2小时',
-                  description: '体验老北京胡同文化',
-                  arFeatures: ['胡同文化讲解', '虚拟时光穿越']
-                }
-              ]
-            },
-            {
-              day: 2,
-              places: [
-                { 
-                  name: '天坛公园', 
-                  duration: '2小时',
-                  description: '探索古代祭天文化',
-                  arFeatures: ['祭天仪式重现', '古代建筑解析']
-                },
-                { 
-                  name: '国家博物馆', 
-                  duration: '3小时',
-                  description: '了解中国历史文明',
-                  arFeatures: ['文物3D展示', '出土过程演示']
-                },
-                { 
-                  name: '王府井大街', 
-                  duration: '2小时',
-                  description: '现代商业与传统文化交融',
-                  arFeatures: ['历史变迁展示', '美食推荐']
-                }
-              ]
-            }
-          ],
-          tips: [
-            '早晨游览景点，避开人流高峰',
-            '准备舒适的鞋子，部分景点需要较多步行',
-            '下载我们的AR应用，增强体验效果',
-            '每个景点都有AR标记点，请留意寻找'
-          ]
-        };
-        
-        setAiRouteResult(mockResult);
-        setAiRouteLoading(false);
-      }, 2000);
-    });
-  };
+  // AI route planning functionality moved to dedicated route planning page
 
   const handlePreviewRoute = (route) => {
     console.log('预览路线:', route);
@@ -523,14 +433,6 @@ const ARExperience = () => {
             <div id="routesSection" className="routes-section animate-section">
               <div className="routes-header">
                 <Title level={2} className="section-title">热门研学路线</Title>
-                <Button 
-                  type="primary" 
-                  icon={<RobotOutlined />} 
-                  onClick={showAiRouteModal}
-                  className="ai-route-button"
-                >
-                  AI定制路线
-                </Button>
               </div>
               
               <Row gutter={[24, 24]}>
@@ -601,8 +503,8 @@ const ARExperience = () => {
                         hoverable 
                         className={`template-card ${visibleSections.templatesSection ? 'visible' : ''}`}
                         onClick={() => {
-                          routeForm.setFieldsValue({ template: template.id });
-                          showAiRouteModal();
+                          // Redirect to route planning page instead
+                          window.location.href = '/route-planning';
                         }}
                       >
                         <div className="template-icon">{template.icon}</div>
@@ -741,157 +643,7 @@ const ARExperience = () => {
         )}
       </Modal>
 
-      {/* AI定制路线模态框 */}
-      <Modal
-        title="AI定制研学路线"
-        visible={aiRouteModalVisible}
-        onCancel={handleAiRouteCancel}
-        footer={null}
-        width={800}
-      >
-        {!aiRouteResult ? (
-          <Form 
-            form={routeForm} 
-            layout="vertical"
-            initialValues={{
-              days: 2,
-              travelers: 2,
-              budget: 'medium',
-              interests: ['history', 'cultural'],
-              template: ''
-            }}
-          >
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item name="days" label="行程天数" rules={[{ required: true }]}>
-                  <Select>
-                    <Option value={1}>1天</Option>
-                    <Option value={2}>2天</Option>
-                    <Option value={3}>3天</Option>
-                    <Option value={5}>5天</Option>
-                    <Option value={7}>7天</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="travelers" label="出行人数" rules={[{ required: true }]}>
-                  <Select>
-                    <Option value={1}>1人</Option>
-                    <Option value={2}>2人</Option>
-                    <Option value={3}>3-5人</Option>
-                    <Option value={6}>6-10人</Option>
-                    <Option value={10}>10人以上</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Form.Item name="template" label="选择模板">
-              <Select placeholder="选择一个路线模板（可选）">
-                <Option value="">不使用模板</Option>
-                {routeTemplates.map(template => (
-                  <Option key={template.id} value={template.id}>
-                    {template.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="interests" label="兴趣偏好" rules={[{ required: true }]}>
-              <Checkbox.Group options={interestOptions} />
-            </Form.Item>
-            <Form.Item name="budget" label="预算水平">
-              <Select>
-                <Option value="low">经济实惠型</Option>
-                <Option value="medium">中等消费型</Option>
-                <Option value="high">高端体验型</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="specialRequests" label="特殊需求">
-              <TextArea 
-                rows={4} 
-                placeholder="例如：有老人和孩子同行，需要无障碍设施，对某类文化特别感兴趣等"
-              />
-            </Form.Item>
-            <Form.Item>
-              <div className="form-actions">
-                <Button onClick={handleAiRouteCancel}>取消</Button>
-                <Button 
-                  type="primary" 
-                  onClick={handleAiRouteSubmit} 
-                  loading={aiRouteLoading}
-                >
-                  生成路线
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
-        ) : (
-          <div className="ai-route-result">
-            <div className="result-header">
-              <div>
-                <Title level={3}>{aiRouteResult.title}</Title>
-                <Paragraph>{aiRouteResult.description}</Paragraph>
-              </div>
-              <Button 
-                type="primary"
-                onClick={() => {
-                  message.success('路线已保存到我的行程，可在APP中查看');
-                  handleAiRouteCancel();
-                }}
-              >
-                保存路线
-              </Button>
-            </div>
-            
-            {aiRouteResult.steps.map((day, index) => (
-              <div key={index} className="day-plan">
-                <Title level={4}>第{day.day}天</Title>
-                <Steps progressDot direction="vertical" current={-1}>
-                  {day.places.map((place, placeIndex) => (
-                    <Step 
-                      key={placeIndex}
-                      title={place.name}
-                      description={
-                        <div className="step-content">
-                          <div className="step-time">{place.duration}</div>
-                          <div className="step-desc">{place.description}</div>
-                          <div className="step-features">
-                            <strong>AR特色：</strong>
-                            {place.arFeatures.map((feature, i) => (
-                              <Tag key={i} color="blue">{feature}</Tag>
-                            ))}
-                          </div>
-                        </div>
-                      }
-                    />
-                  ))}
-                </Steps>
-              </div>
-            ))}
-            
-            <div className="route-tips">
-              <Title level={4}>行程贴士</Title>
-              <ul>
-                {aiRouteResult.tips.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="result-actions">
-              <Button onClick={handleAiRouteCancel}>关闭</Button>
-              <Button 
-                type="primary" 
-                onClick={() => {
-                  message.success('路线已加载到AR地图中，请打开APP查看');
-                  handleAiRouteCancel();
-                }}
-              >
-                AR路线预览
-              </Button>
-            </div>
-          </div>
-        )}
-        </Modal>
+      {/* AI route planning functionality moved to dedicated route planning page */}
     </motion.div>
   );
 };

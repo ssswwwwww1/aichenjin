@@ -4,9 +4,9 @@
   top: 0;
   z-index: 1000;
   width: 100%;
-  background: var(--header-background, #001529);
+  background: linear-gradient(90deg, #1A237E 0%, #3949AB 100%);
   padding: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   transition: all 0.3s;
 }
 
@@ -16,41 +16,65 @@
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   height: 64px;
 }
 
-.logo {
+/* Logo 样式 */
+.logo-container {
   display: flex;
   align-items: center;
+  margin-right: 24px;
 }
 
-.logo h1 {
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+
+.logo-image {
+  height: 48px;
+  width: 48px;
+  margin-right: 12px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.logo-text {
   color: #fff;
   margin: 0;
-  font-size: 20px;
-  background: linear-gradient(90deg, #fff, #bbdefb);
+  font-size: 24px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #fff, #90CAF9);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0px 0px 10px rgba(255,255,255,0.2);
+  text-shadow: 0px 0px 12px rgba(255,255,255,0.3);
   position: relative;
+  letter-spacing: 1px;
 }
 
-.logo h1::after {
+.logo-text::after {
   content: '';
   position: absolute;
   bottom: -2px;
   left: 0;
-  width: 100%;
+  width: 0%;
   height: 2px;
-  background: linear-gradient(90deg, #4fc3f7, transparent);
+  background: linear-gradient(90deg, #64B5F6, transparent);
   transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 0.3s;
+  transition: width 0.3s ease;
 }
 
-.logo:hover h1::after {
-  transform: scaleX(1);
+.logo-link:hover .logo-text::after {
+  width: 100%;
+}
+
+.logo-link:hover .logo-image {
+  transform: rotate(15deg) scale(1.1);
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
 }
 
 .nav-section {
@@ -65,22 +89,124 @@
   line-height: 64px;
   display: flex;
   justify-content: center;
+  background: transparent;
+  border-bottom: none;
+}
+
+.main-menu .ant-menu-item {
+  padding: 0 20px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin: 0 4px;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-menu .ant-menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.2) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transition: all 0.5s ease;
+  z-index: 0;
+}
+
+.main-menu .ant-menu-item:hover::before {
+  left: 100%;
+}
+
+.main-menu .ant-menu-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #64B5F6, #90CAF9);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 3px 3px 0 0;
+}
+
+.main-menu .ant-menu-item:hover::after {
+  width: 40px;
+}
+
+.main-menu .ant-menu-item-selected::after {
+  width: 40px;
+  box-shadow: 0 0 8px rgba(100, 181, 246, 0.5);
+}
+
+/* 添加导航项动画 */
+.main-menu .ant-menu-item {
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.main-menu .ant-menu-item:hover {
+  transform: translateY(-3px);
+}
+
+.main-menu .ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  position: relative;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .action-button {
   color: var(--header-text-color, #fff);
-  font-size: 16px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-button svg {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.action-button:hover svg {
+  transform: scale(1.2) rotate(15deg);
 }
 
 .user-avatar {
   cursor: pointer;
   margin-left: 8px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.user-avatar:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* 主题切换相关 */
@@ -284,5 +410,35 @@
   }
   100% {
     box-shadow: 0 0 0 0 rgba(24, 144, 255, 0);
+  }
+} 
+
+/* 添加波纹效果 */
+.logo-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 1;
+}
+
+.logo-container:hover::after {
+  animation: ripple 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
   }
 } 
