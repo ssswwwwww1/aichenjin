@@ -59,7 +59,7 @@ function checkEnvironment() {
 function buildProject() {
   try {
     console.log(`${colors.yellow}[2/5]${colors.reset} 构建项目...`);
-    execSync('npm run build', { stdio: 'inherit' });
+    execSync('npm run build:win', { stdio: 'inherit' });
     console.log(`${colors.green}✓ 构建成功${colors.reset}\n`);
     return true;
   } catch (error) {

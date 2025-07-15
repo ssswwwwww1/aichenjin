@@ -1,8 +1,9 @@
+/* Optimized AR Experience CSS */
 .ar-experience-page {
   padding-bottom: 48px;
   background: linear-gradient(135deg, #f5f7fa 0%, #e1e8f2 100%);
-  animation: gradientShift 15s ease infinite;
   background-size: 200% 200%;
+  animation: gradientShift 20s ease infinite;
 }
 
 @keyframes gradientShift {
@@ -34,16 +35,12 @@
   height: 100%;
   background: radial-gradient(circle, rgba(26, 42, 58, 0.2) 0%, rgba(26, 42, 58, 0.6) 100%);
   z-index: 1;
-  animation: pulse 10s infinite alternate;
+  animation: pulse 15s infinite alternate;
 }
 
 @keyframes pulse {
-  0% {
-    opacity: 0.2;
-  }
-  100% {
-    opacity: 0.6;
-  }
+  0% { opacity: 0.2; }
+  100% { opacity: 0.6; }
 }
 
 .ar-hero-title {
@@ -53,7 +50,6 @@
   position: relative;
   z-index: 2;
   text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  animation: fadeInDown 1s ease-out;
 }
 
 .ar-hero-desc {
@@ -63,24 +59,18 @@
   margin: 0 auto !important;
   position: relative;
   z-index: 2;
-  animation: fadeInUp 1s ease-out 0.3s both;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Simplified animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -93,22 +83,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
-  opacity: 0;
-  animation: fadeInUp 0.8s forwards;
+  will-change: transform, box-shadow;
 }
 
-.scenario-card:nth-child(1) { animation-delay: 0.1s; }
-.scenario-card:nth-child(2) { animation-delay: 0.2s; }
-.scenario-card:nth-child(3) { animation-delay: 0.3s; }
-.scenario-card:nth-child(4) { animation-delay: 0.4s; }
-.scenario-card:nth-child(5) { animation-delay: 0.5s; }
-.scenario-card:nth-child(6) { animation-delay: 0.6s; }
-
 .scenario-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .scenario-card .ant-card-cover {
@@ -116,26 +98,21 @@
 }
 
 .scenario-card .ant-card-cover img {
-  transition: transform 0.8s ease;
+  transition: transform 0.5s ease;
+  will-change: transform;
 }
 
 .scenario-card:hover .ant-card-cover img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .scenario-location {
   margin-bottom: 8px;
   color: rgba(0, 0, 0, 0.45);
-  transition: color 0.3s ease;
-}
-
-.scenario-card:hover .scenario-location {
-  color: #1890ff;
 }
 
 .scenario-desc {
   margin-bottom: 8px !important;
-  transition: color 0.3s ease;
 }
 
 .scenario-tags {
@@ -143,12 +120,11 @@
 }
 
 .scenario-tags .ant-tag {
-  transition: transform 0.3s ease, background 0.3s ease;
-  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .scenario-tags .ant-tag:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-2px);
 }
 
 .scenario-button {
@@ -157,34 +133,12 @@
 }
 
 .scenario-button .ant-btn {
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .scenario-button .ant-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.scenario-button .ant-btn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0;
-  border-radius: 100%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.8s, opacity 0.8s;
-}
-
-.scenario-button .ant-btn:active::after {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 0.3;
-  transition: 0s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 使用指南样式 */
@@ -196,22 +150,15 @@
   text-align: center;
   height: 100%;
   padding: 24px 16px;
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
-  opacity: 0;
-  animation: fadeInUp 0.8s forwards;
 }
-
-.guide-card:nth-child(1) { animation-delay: 0.1s; }
-.guide-card:nth-child(2) { animation-delay: 0.3s; }
-.guide-card:nth-child(3) { animation-delay: 0.5s; }
-.guide-card:nth-child(4) { animation-delay: 0.7s; }
 
 .guide-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .guide-card::before {
@@ -224,7 +171,7 @@
   background: linear-gradient(90deg, #9D2933, #ff8177);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .guide-card:hover::before {
@@ -235,23 +182,21 @@
   font-size: 48px;
   color: #9D2933;
   margin-bottom: 16px;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .guide-card:hover .guide-icon {
-  transform: scale(1.2) rotate(10deg);
+  transform: scale(1.1);
 }
 
 .guide-step {
   font-weight: bold;
   color: #9D2933;
   margin-bottom: 8px;
-  transition: color 0.3s ease;
 }
 
 .guide-title {
   margin-bottom: 12px !important;
-  transition: color 0.3s ease;
 }
 
 .guide-card:hover .guide-title {
@@ -260,14 +205,11 @@
 
 .guide-content {
   color: rgba(0, 0, 0, 0.65);
-  transition: color 0.3s ease;
 }
 
 .guide-download {
   text-align: center;
   margin-top: 48px;
-  opacity: 0;
-  animation: fadeInUp 0.8s forwards 1s;
 }
 
 .qr-codes {
@@ -278,11 +220,11 @@
 
 .qr-item {
   margin: 0 24px;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .qr-item:hover {
-  transform: translateY(-8px) scale(1.05);
+  transform: translateY(-5px);
 }
 
 .qr-image {
@@ -290,17 +232,11 @@
   height: 150px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.qr-item:hover .qr-image {
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .qr-title {
   margin-top: 8px;
   font-weight: bold;
-  transition: color 0.3s ease;
 }
 
 .qr-item:hover .qr-title {
@@ -310,20 +246,18 @@
 /* 技术介绍样式 */
 .tech-section {
   margin-top: 24px;
-  opacity: 0;
-  animation: fadeIn 1s forwards;
 }
 
 .tech-feature-card {
   height: 100%;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 8px;
   overflow: hidden;
 }
 
 .tech-feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .tech-feature-list {
@@ -334,7 +268,7 @@
 .tech-feature-list li {
   margin-bottom: 8px;
   color: rgba(0, 0, 0, 0.75);
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
   padding: 3px 0;
 }
 
@@ -356,7 +290,7 @@
 
 .feature-list li {
   margin-bottom: 8px;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .feature-list li:hover {
@@ -366,7 +300,6 @@
 
 .scenario-qrcode {
   margin-top: 24px;
-  animation: fadeIn 0.5s ease;
 }
 
 .qrcode-container {
@@ -379,29 +312,16 @@
 .qrcode-icon {
   font-size: 32px;
   margin-right: 16px;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
 }
 
 .qrcode-image {
   width: 200px;
   height: 200px;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .qrcode-image:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .qrcode-tip {
@@ -439,34 +359,26 @@
 
 .ai-route-button {
   margin-left: 16px;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
-  animation: pulse 2s infinite;
 }
 
 .ai-route-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .route-card {
   overflow: hidden;
   height: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s ease;
-  opacity: 0;
-  animation: fadeInUp 0.8s forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.route-card:nth-child(1) { animation-delay: 0.1s; }
-.route-card:nth-child(2) { animation-delay: 0.3s; }
-.route-card:nth-child(3) { animation-delay: 0.5s; }
-.route-card:nth-child(4) { animation-delay: 0.7s; }
-
 .route-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .route-card-content {
@@ -485,11 +397,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.4s ease;
+  will-change: transform;
 }
 
 .route-card:hover .route-image img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .route-info {
@@ -506,11 +419,6 @@
 
 .route-meta span {
   margin-right: 16px;
-  transition: color 0.3s ease;
-}
-
-.route-card:hover .route-meta span {
-  color: #1890ff;
 }
 
 .route-rating {
@@ -521,11 +429,6 @@
   font-size: 18px;
   font-weight: bold;
   color: #faad14;
-  transition: transform 0.3s ease;
-}
-
-.route-card:hover .rating-score {
-  transform: scale(1.1);
 }
 
 .rating-count {
@@ -535,59 +438,34 @@
 
 .route-description {
   margin-bottom: 12px !important;
-  transition: color 0.3s ease;
 }
 
 .preview-button {
   margin-top: auto;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .preview-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.preview-button::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0;
-  border-radius: 100%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.8s, opacity 0.8s;
-}
-
-.preview-button:active::after {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 0.3;
-  transition: 0s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .route-templates {
   margin-top: 40px;
-  opacity: 0;
-  animation: fadeIn 1s forwards 0.5s;
 }
 
 .template-card {
   text-align: center;
   height: 100%;
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
 
 .template-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .template-card::before {
@@ -600,7 +478,7 @@
   background: linear-gradient(90deg, #1890ff, #69c0ff);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .template-card:hover::before {
@@ -610,11 +488,11 @@
 .template-icon {
   font-size: 36px;
   margin-bottom: 16px;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .template-card:hover .template-icon {
-  transform: scale(1.2) rotate(15deg);
+  transform: scale(1.1);
 }
 
 .form-actions {
@@ -625,11 +503,11 @@
 
 .form-actions .ant-btn {
   margin-left: 12px;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .form-actions .ant-btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .ai-route-result {
@@ -644,33 +522,16 @@
 }
 
 .result-header .ant-btn {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .result-header .ant-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .day-plan {
   margin-bottom: 32px;
-  opacity: 0;
-  animation: fadeInRight 0.8s forwards;
-}
-
-.day-plan:nth-child(2) { animation-delay: 0.2s; }
-.day-plan:nth-child(3) { animation-delay: 0.4s; }
-.day-plan:nth-child(4) { animation-delay: 0.6s; }
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .step-content {
@@ -689,13 +550,13 @@
 }
 
 .step-features .ant-tag {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-bottom: 4px;
 }
 
 .step-features .ant-tag:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .route-tips {
@@ -704,8 +565,6 @@
   border-radius: 8px;
   background: #f6ffed;
   border: 1px solid #b7eb8f;
-  animation: fadeIn 1s forwards 0.8s;
-  opacity: 0;
 }
 
 .route-tips ul {
@@ -714,7 +573,7 @@
 
 .route-tips li {
   margin-bottom: 8px;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .route-tips li:hover {
@@ -729,11 +588,11 @@
 
 .result-actions .ant-btn {
   margin-left: 12px;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .result-actions .ant-btn:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 /* 场景详情 */
@@ -744,17 +603,16 @@
 .detail-image {
   width: 100%;
   border-radius: 8px;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .detail-image:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .detail-qrcode {
   margin-top: 16px;
   text-align: center;
-  animation: fadeIn 0.5s ease 0.3s both;
 }
 
 .detail-qrcode img {
@@ -765,7 +623,7 @@
 }
 
 .detail-qrcode img:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .detail-location {
@@ -780,7 +638,7 @@
 
 .detail-features li {
   margin-bottom: 8px;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
   padding: 3px 0;
 }
 
@@ -791,7 +649,7 @@
 
 /* 标签页动画 */
 .ant-tabs-tab {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .ant-tabs-tab:hover {
@@ -799,11 +657,11 @@
 }
 
 .ant-tabs-tab-btn {
-  transition: color 0.3s;
+  transition: color 0.2s;
 }
 
 .ant-tabs-ink-bar {
-  transition: width 0.3s ease, left 0.3s ease !important;
+  transition: width 0.2s ease, left 0.2s ease !important;
 }
 
 @media (max-width: 768px) {
@@ -826,7 +684,7 @@
   margin-top: 12px;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .scenario-card:hover .scenario-actions {
@@ -835,11 +693,11 @@
 }
 
 .scenario-actions .ant-btn {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .scenario-actions .ant-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
 }
 
 /* 路线操作按钮样式 */
@@ -851,29 +709,29 @@
 }
 
 .route-actions .ant-btn {
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .route-actions .ant-btn:hover {
   transform: scale(1.05);
 }
 
-/* 显示动画控制 */
-.animate-section .scenario-card,
-.animate-section .guide-card,
-.animate-section .route-card,
-.animate-section .template-card,
-.animate-section .tech-feature-card {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+/* 使用 will-change 提示浏览器优化渲染 */
+.scenario-card,
+.guide-card,
+.route-card,
+.template-card {
+  will-change: transform;
 }
 
-.animate-section.visible .scenario-card,
-.animate-section.visible .guide-card,
-.animate-section.visible .route-card,
-.animate-section.visible .template-card,
-.animate-section.visible .tech-feature-card {
+/* 懒加载动画类 */
+.lazy-load {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.lazy-load.visible {
   opacity: 1;
   transform: translateY(0);
 } 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Typography, Row, Col, Card, Tabs, Button, List, Tag, Modal, message, notification } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   CompassOutlined, 
   EnvironmentOutlined, 
@@ -23,71 +23,36 @@ const { Title, Paragraph } = Typography;
 const { TabPane } = Tabs;
 const { Meta } = Card;
 
-// Animation variants
+// 简化动画配置
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { 
-      duration: 0.5,
-      when: "beforeChildren",
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.5 }
-  }
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.9, y: 20 },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.5 }
-  },
-  hover: { 
-    y: -15, 
-    boxShadow: "0 15px 30px rgba(0,0,0,0.15)",
     transition: { duration: 0.3 }
   }
 };
 
-const routeCardVariants = {
-  hidden: { opacity: 0, x: -20 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
   visible: { 
     opacity: 1, 
-    x: 0,
-    transition: { duration: 0.5 }
-  },
-  hover: { 
-    scale: 1.03,
-    boxShadow: "0 10px 20px rgba(0,0,0,0.15)",
-    transition: { duration: 0.2 }
+    y: 0,
+    transition: { duration: 0.3 }
   }
 };
 
 // Create motion components
 const MotionCard = motion(Card);
 const MotionRow = motion(Row);
-const MotionCol = motion(Col);
 
 const ARExperience = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScenario, setCurrentScenario] = useState(null);
   const [activeTab, setActiveTab] = useState('1');
-  // Route planning functionality moved to dedicated page
   const [visibleSections, setVisibleSections] = useState({});
   const [likedItems, setLikedItems] = useState({});
   
-  // 用于记录元素是否可见的观察器
+  // 优化懒加载实现
   useEffect(() => {
     const observerOptions = {
       root: null,
@@ -98,6 +63,7 @@ const ARExperience = () => {
     const observerCallback = (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
           setVisibleSections(prev => ({
             ...prev,
             [entry.target.id]: true
@@ -108,19 +74,20 @@ const ARExperience = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    // 监视各个部分
-    const sections = document.querySelectorAll('.animate-section');
-    sections.forEach(section => {
-      observer.observe(section);
+    // 监视懒加载元素
+    const lazyElements = document.querySelectorAll('.lazy-load');
+    lazyElements.forEach(element => {
+      observer.observe(element);
     });
 
     return () => {
-      sections.forEach(section => {
-        observer.unobserve(section);
+      lazyElements.forEach(element => {
+        observer.unobserve(element);
       });
     };
   }, []);
 
+  // 场景列表数据
   const scenarioList = [
     {
       id: 1,
@@ -335,8 +302,6 @@ const ARExperience = () => {
     setModalVisible(false);
   };
 
-  // AI route planning functionality moved to dedicated route planning page
-
   const handlePreviewRoute = (route) => {
     console.log('预览路线:', route);
     message.success({
@@ -352,7 +317,7 @@ const ARExperience = () => {
       className="ar-experience-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       <div className="ar-hero">
         <div className="container">
@@ -367,13 +332,14 @@ const ARExperience = () => {
       <div className="container">
         <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)}>
           <TabPane tab="体验景点" key="1">
-            <div id="scenarioSection" className="animate-section">
+            <div id="scenarioSection">
             <Row gutter={[24, 24]}>
-              {scenarioList.map(scenario => (
+              {scenarioList.map((scenario, index) => (
                 <Col xs={24} sm={12} md={6} key={scenario.id}>
                   <Card
                     hoverable
-                      className={`scenario-card card-hover ${visibleSections.scenarioSection ? 'visible' : ''}`}
+                    className={`scenario-card lazy-load`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
                     cover={<img alt={scenario.title} src={scenario.cover} />}
                   >
                     <Meta 
@@ -403,42 +369,42 @@ const ARExperience = () => {
                         了解详情
                       </Button>
                     </div>
-                      <div className="scenario-actions">
-                        <Button 
-                          type="text" 
-                          icon={likedItems[scenario.id] ? 
-                            <HeartOutlined style={{ color: '#ff4d4f' }} /> : 
-                            <HeartOutlined />
-                          }
-                          onClick={() => handleLike(scenario.id)}
-                        >
-                          收藏
-                        </Button>
-                        <Button 
-                          type="text" 
-                          icon={<ShareAltOutlined />}
-                          onClick={() => handleShare(scenario)}
-                        >
-                          分享
-                        </Button>
-                      </div>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
+                    <div className="scenario-actions">
+                      <Button 
+                        type="text" 
+                        icon={likedItems[scenario.id] ? 
+                          <HeartOutlined style={{ color: '#ff4d4f' }} /> : 
+                          <HeartOutlined />
+                        }
+                        onClick={() => handleLike(scenario.id)}
+                      >
+                        收藏
+                      </Button>
+                      <Button 
+                        type="text" 
+                        icon={<ShareAltOutlined />}
+                        onClick={() => handleShare(scenario)}
+                      >
+                        分享
+                      </Button>
+                    </div>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
             </div>
           </TabPane>
           
           <TabPane tab="AR路线预览" key="2">
-            <div id="routesSection" className="routes-section animate-section">
+            <div id="routesSection" className="routes-section">
               <div className="routes-header">
                 <Title level={2} className="section-title">热门研学路线</Title>
               </div>
               
               <Row gutter={[24, 24]}>
-                {popularRoutes.map(route => (
+                {popularRoutes.map((route, index) => (
                   <Col xs={24} sm={12} key={route.id}>
-                    <Card hoverable className={`route-card ${visibleSections.routesSection ? 'visible' : ''}`}>
+                    <Card hoverable className={`route-card lazy-load`} style={{ animationDelay: `${index * 0.1}s` }}>
                       <div className="route-card-content">
                         <div className="route-image">
                           <img src={route.cover} alt={route.title} />
@@ -494,39 +460,39 @@ const ARExperience = () => {
                 ))}
               </Row>
               
-              <div id="templatesSection" className="route-templates animate-section">
+              <div id="templatesSection" className="route-templates">
                 <Title level={3}>路线模板</Title>
                 <Row gutter={[16, 16]}>
-                  {routeTemplates.map(template => (
+                  {routeTemplates.map((template, index) => (
                     <Col xs={24} sm={12} md={6} key={template.id}>
                       <Card 
                         hoverable 
-                        className={`template-card ${visibleSections.templatesSection ? 'visible' : ''}`}
+                        className={`template-card lazy-load`}
+                        style={{ animationDelay: `${index * 0.1}s` }}
                         onClick={() => {
-                          // Redirect to route planning page instead
                           window.location.href = '/route-planning';
                         }}
                       >
                         <div className="template-icon">{template.icon}</div>
                         <Title level={4}>{template.name}</Title>
                         <Paragraph>{template.description}</Paragraph>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
               </div>
             </div>
           </TabPane>
           
           <TabPane tab="使用指南" key="3">
-            <div id="guideSection" className="guide-section animate-section">
+            <div id="guideSection" className="guide-section">
               <Title level={2} className="section-title">如何使用AR功能</Title>
               <List
                 grid={{ gutter: 16, xs: 1, sm: 2, md: 4 }}
                 dataSource={guideSteps}
                 renderItem={(item, index) => (
                   <List.Item>
-                    <Card className={`guide-card ${visibleSections.guideSection ? 'visible' : ''}`}>
+                    <Card className={`guide-card lazy-load`} style={{ animationDelay: `${index * 0.1}s` }}>
                       <div className="guide-icon">{item.icon}</div>
                       <div className="guide-step">步骤 {index + 1}</div>
                       <Title level={4} className="guide-title">{item.title}</Title>
@@ -535,7 +501,7 @@ const ARExperience = () => {
                   </List.Item>
                 )}
               />
-              <div className="guide-download">
+              <div className="guide-download lazy-load">
                 <Title level={3}>立即下载体验</Title>
                 <div className="qr-codes">
                   <div className="qr-item">
@@ -560,7 +526,7 @@ const ARExperience = () => {
           </TabPane>
           
           <TabPane tab="技术介绍" key="4">
-            <div id="techSection" className="tech-section animate-section">
+            <div id="techSection" className="tech-section lazy-load">
               <Title level={2} className="section-title">AR技术说明</Title>
               <Row gutter={[32, 32]}>
                 <Col xs={24} md={12}>
@@ -580,7 +546,7 @@ const ARExperience = () => {
                   </Paragraph>
                 </Col>
                 <Col xs={24} md={12}>
-                  <Card className={`tech-feature-card ${visibleSections.techSection ? 'visible' : ''}`}>
+                  <Card className="tech-feature-card">
                     <Title level={3}>核心功能</Title>
                     <ul className="tech-feature-list">
                       <li>实时环境识别与跟踪</li>
@@ -600,10 +566,10 @@ const ARExperience = () => {
       </div>
 
       {/* AR场景详情模态框 */}
-        <Modal
+      <Modal
         title={currentScenario ? currentScenario.title : ''}
         visible={modalVisible}
-          onCancel={handleModalClose}
+        onCancel={handleModalClose}
         footer={[
           <Button key="close" onClick={handleModalClose}>
             关闭
@@ -612,19 +578,19 @@ const ARExperience = () => {
             开始体验
           </Button>
         ]}
-          width={700}
-        >
+        width={700}
+      >
         {currentScenario && (
           <div className="scenario-detail">
             <Row gutter={24}>
-            <Col xs={24} md={12}>
+              <Col xs={24} md={12}>
                 <img src={currentScenario.cover} alt={currentScenario.title} className="detail-image" />
                 <div className="detail-qrcode">
                   <QrcodeOutlined /> 扫码体验
                   <img src={currentScenario.qrcode} alt="AR体验二维码" />
-              </div>
-            </Col>
-            <Col xs={24} md={12}>
+                </div>
+              </Col>
+              <Col xs={24} md={12}>
                 <Paragraph>{currentScenario.description}</Paragraph>
                 <div className="detail-location">
                   <EnvironmentOutlined /> <strong>地点：</strong>{currentScenario.location}
@@ -632,18 +598,16 @@ const ARExperience = () => {
                 <div className="detail-features">
                   <Title level={4}>AR体验特色</Title>
                   <ul>
-                {currentScenario.features.map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-              </ul>
+                    {currentScenario.features.map((feature, index) => (
+                      <li key={index}>{feature}</li>
+                    ))}
+                  </ul>
                 </div>
               </Col>
             </Row>
           </div>
         )}
       </Modal>
-
-      {/* AI route planning functionality moved to dedicated route planning page */}
     </motion.div>
   );
 };
